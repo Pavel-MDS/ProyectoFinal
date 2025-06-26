@@ -13,13 +13,13 @@ const Registro = () => {
     const formularioRegister = document.querySelector('.formulario__register');
 
     btnIniciarSesion.addEventListener('click', () => {
-      formularioLogin.style.display = 'block';
-      formularioRegister.style.display = 'none';
+      formularioLogin.classList.add('active');
+      formularioRegister.classList.remove('active');
     });
 
     btnRegistrarse.addEventListener('click', () => {
-      formularioLogin.style.display = 'none';
-      formularioRegister.style.display = 'block';
+      formularioRegister.classList.add('active');
+      formularioLogin.classList.remove('active');
     });
 
     tipoCuenta.addEventListener('change', () => {
@@ -108,43 +108,40 @@ const Registro = () => {
             <h3>¿Ya tienes una cuenta?</h3>
             <p>Inicia sesión para entrar en la página</p>
             <button id="btn__iniciar-sesion">Iniciar Sesión</button>
+            <form className="formulario__login">
+              <h2>Iniciar Sesión</h2>
+              <input type="text" id="correoUsuario" placeholder="Correo Electrónico" required />
+              <input type="password" id="contrasenaUsuario" placeholder="Contraseña" required />
+              <button type="submit">Entrar</button>
+            </form>
+
           </div>
           <div className="caja__trasera-register">
             <h3>¿Aún no tienes una cuenta?</h3>
             <p>Regístrate para que puedas iniciar sesión</p>
             <button id="btn__registrarse">Registrarse</button>
+
+            <form className="formulario__register" id="form-emprendedor">
+              <h2>Registro</h2>
+              <select id="tipoCuenta">
+                <option value="usuario">Usuario</option>
+                <option value="emprendedor">Emprendedor</option>
+              </select>
+              <div id="registroUsuario">
+                <input type="text" id="nombreUsuario" placeholder="Nombre" />
+                <input type="email" id="correoRegistroUsuario" placeholder="Correo electrónico" />
+                <input type="password" id="contrasenaRegistroUsuario" placeholder="Contraseña" />
+              </div>
+              <div id="registroEmprendedor" className="hidden">
+                <input type="text" id="nombreNegocio" placeholder="Nombre del negocio" required />
+                <input type="email" id="correoNegocio" placeholder="Correo electrónico" required />
+                <input type="password" id="contrasenaNegocio" placeholder="Contraseña" required />
+                <input type="text" id="contactoNegocio" placeholder="Número de contacto" required />
+                <input type="text" id="direccionNegocio" placeholder="Dirección del negocio" required />
+              </div>
+              <button type="submit">Registrarse</button>
+            </form>
           </div>
-        </div>
-
-        {/* Formularios separados */}
-        <div className="contenedor__login-register" id="contenedorLoginRegister">
-          <form className="formulario__login">
-            <h2>Iniciar Sesión</h2>
-            <input type="text" id="correoUsuario" placeholder="Correo Electrónico" required />
-            <input type="password" id="contrasenaUsuario" placeholder="Contraseña" required />
-            <button type="submit">Entrar</button>
-          </form>
-
-          <form className="formulario__register" id="form-emprendedor">
-            <h2>Registro</h2>
-            <select id="tipoCuenta">
-              <option value="usuario">Usuario</option>
-              <option value="emprendedor">Emprendedor</option>
-            </select>
-            <div id="registroUsuario">
-              <input type="text" id="nombreUsuario" placeholder="Nombre" />
-              <input type="email" id="correoRegistroUsuario" placeholder="Correo electrónico" />
-              <input type="password" id="contrasenaRegistroUsuario" placeholder="Contraseña" />
-            </div>
-            <div id="registroEmprendedor" className="hidden">
-              <input type="text" id="nombreNegocio" placeholder="Nombre del negocio" required />
-              <input type="email" id="correoNegocio" placeholder="Correo electrónico" required />
-              <input type="password" id="contrasenaNegocio" placeholder="Contraseña" required />
-              <input type="text" id="contactoNegocio" placeholder="Número de contacto" required />
-              <input type="text" id="direccionNegocio" placeholder="Dirección del negocio" required />
-            </div>
-            <button type="submit">Registrarse</button>
-          </form>
         </div>
       </div>
 

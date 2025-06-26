@@ -7,15 +7,16 @@
   font-family: 'Roboto', sans-serif;
 }
 
-/* Fondo de página */
+/* Fondo */
 body {
-  background-image: url('/img/fondo.jpg'); /* Asegúrate que esté en public/img */
+  background-image: url('/img/fondo.jpg');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
 }
 
+/* Estructura principal */
 main {
   width: 100%;
   padding: 20px;
@@ -27,36 +28,44 @@ main {
 
 .contenedor__todo {
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   margin: auto;
-  position: relative;
 }
 
+/* Paneles traseros */
 .caja__trasera {
   width: 100%;
-  padding: 10px 20px;
   display: flex;
-  justify-content: row;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  backdrop-filter: blur(10px);
+  justify-content: space-between;
   background-color: rgba(0, 128, 255, 0.5);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  height: 500px;
 }
 
-.caja__trasera div {
-  margin: 100px 40px;
+.caja__trasera-login,
+.caja__trasera-register {
+  flex: 1;
+  position: relative;
   color: white;
-  transition: all 500ms;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.caja__trasera div p,
-.caja__trasera div button {
-  margin-top: 30px;
-}
-
-.caja__trasera div h3 {
+/* Texto y botones en los paneles */
+.caja__trasera h3 {
   font-weight: 400;
   font-size: 26px;
+}
+
+.caja__trasera p,
+.caja__trasera button {
+  margin-top: 30px;
 }
 
 .caja__trasera button {
@@ -76,63 +85,71 @@ main {
   color: #46a2fd;
 }
 
-.contenedor__login-register {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 380px;
-  transition: height 0.3s ease;
+/* Formularios superpuestos */
+.caja__trasera-login,
+.caja__trasera-register {
+  position: relative; /* contenedor de los formularios */
+  overflow: hidden;   /* evita que sobresalga */
 }
 
-.contenedor__login-register form {
+.formulario__login,
+.formulario__register {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 80px 20px;
-  background: #fff;
-  position: relative;
-  border-radius: 20px;
+  height: 100%;
+  display: none;
+  padding: 30px 20px;
+  background: white;
+  border-radius: 10px;
+  z-index: 2;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  overflow-y: auto;
 }
 
-.contenedor__login-register form h2 {
-  font-size: 30px;
+.formulario__login.active,
+.formulario__register.active {
+  display: block;
+}
+
+.formulario__login h2,
+.formulario__register h2 {
+  font-size: 26px;
   text-align: center;
   margin-bottom: 20px;
   color: #46a2fd;
 }
 
-.contenedor__login-register form input {
+.formulario__login input,
+.formulario__register input,
+.formulario__register select,
+.formulario__register textarea {
   width: 100%;
-  margin-top: 20px;
+  margin-top: 15px;
   padding: 10px;
   border: none;
   background: #f2f2f2;
   font-size: 16px;
   outline: none;
+  border-radius: 5px;
 }
 
-.contenedor__login-register form button {
+.formulario__login button[type='submit'],
+.formulario__register button[type='submit'] {
   padding: 10px 40px;
-  margin-top: 40px;
+  margin-top: 30px;
+  background-color: #28a745;
   border: none;
-  font-size: 14px;
-  background: #46a2fd;
   color: white;
   cursor: pointer;
-  outline: none;
+  font-weight: bold;
+  border-radius: 5px;
 }
 
-.formulario__login {
-  position: absolute;
-  width: 48%; /* Ancho de los formularios */
-  padding: 80px 20px;
-  background: #fff;
-  border-radius: 20px;
-  transition: all 0.5s ease;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.formulario__register {
-  display: none;
+.formulario__login button[type='submit']:hover,
+.formulario__register button[type='submit']:hover {
+  background-color: #218838;
 }
 
 /* Panel Emprendedor */
@@ -143,51 +160,26 @@ main {
   border-radius: 10px;
 }
 
-/* Inputs y botones */
-input,
-select,
-button[type='submit'] {
-  padding: 10px 20px;
-  background-color: #28a745;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-button[type='submit']:hover {
-  background-color: #218838;
-}
-
+/* Utilidades */
 .hidden {
   display: none;
 }
 
 /* Responsive */
 @media screen and (max-width: 850px) {
-  main {
-    margin-top: 50px;
-  }
-
   .caja__trasera {
-    max-width: 350px;
-    height: 300px;
     flex-direction: column;
-    margin: auto;
+    height: auto;
   }
 
-  .caja__trasera div {
-    margin: 0px;
-    position: absolute;
+  .caja__trasera-login,
+  .caja__trasera-register {
+    width: 100%;
+    padding: 40px 20px;
   }
 
-  .contenedor__login-register {
-    top: -10px;
-    left: 5px;
-    margin: auto;
-  }
-
-  .contenedor__login-register form {
-    position: relative;
+  .formulario__login,
+  .formulario__register {
+    border-radius: 0 0 20px 20px;
   }
 }
