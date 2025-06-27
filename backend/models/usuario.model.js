@@ -35,10 +35,15 @@ const eliminarUsuario = (id, callback) => {
   db.query('DELETE FROM usuarios WHERE id = ?', [id], callback);
 };
 
+// Obtener por Correo
+const obtenerUsuarioPorCorreo = (correo, callback) =>
+  db.query('SELECT * FROM usuarios WHERE correo = ?', [correo], callback);
+
 module.exports = {
   obtenerUsuarios,
   obtenerUsuarioPorId,
   crearUsuario,
   actualizarUsuario,
-  eliminarUsuario
+  eliminarUsuario,
+  obtenerUsuarioPorCorreo
 };

@@ -34,6 +34,7 @@ main {
 
 /* Paneles traseros */
 .caja__trasera {
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -44,6 +45,28 @@ main {
   position: relative;
   height: 500px;
 }
+
+/* Contenedor de formulario: absoluta dentro de la caja trasera */
+.form-container {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  transition: left 0.4s ease;
+  z-index: 2;
+  overflow-y: auto;
+}
+
+/* Cuando estamos en modo login, lo colocamos sobre la mitad izquierda */
+.login-mode .form-container {
+  left: 0;
+}
+
+/* Cuando estamos en modo register, lo colocamos sobre la mitad derecha */
+.register-mode .form-container {
+  left: 50%;
+}
+
 
 .caja__trasera-login,
 .caja__trasera-register {
@@ -85,6 +108,11 @@ main {
   color: #46a2fd;
 }
 
+.login-mode .form-container { left: 0; }
+.register-mode .form-container { left: 50%; }
+
+
+
 /* Formularios superpuestos */
 .caja__trasera-login,
 .caja__trasera-register {
@@ -94,18 +122,14 @@ main {
 
 .formulario__login,
 .formulario__register {
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: none;
+  /* ancho completo del contenedor */
   width: 100%;
   height: 100%;
-  display: none;
   padding: 30px 20px;
   background: white;
-  border-radius: 10px;
-  z-index: 2;
+  border-radius: 0 0 10px 10px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  overflow-y: auto;
 }
 
 .formulario__login.active,
@@ -122,6 +146,7 @@ main {
 }
 
 .formulario__login input,
+.formulario__login select,
 .formulario__register input,
 .formulario__register select,
 .formulario__register textarea {
@@ -163,6 +188,15 @@ main {
 /* Utilidades */
 .hidden {
   display: none;
+}
+
+.caja__trasera { position: relative; }
+.form-container {
+  position: absolute;
+  top: 0; left: 0;
+  width: 50%; height: 100%;
+  transition: left 0.4s ease;
+  z-index: 2;
 }
 
 /* Responsive */

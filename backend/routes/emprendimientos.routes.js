@@ -3,6 +3,8 @@
 const express = require('express');
 const router = express.Router();
 const emprendimientosController = require('../controllers/emprendimientos.controller');
+const { validarToken, autorizar } = require('../middleware/auth.middleware');
+
 
 // Obtener todos los emprendimientos
 router.get('/', emprendimientosController.listarEmprendimientos);
@@ -18,5 +20,12 @@ router.put('/:id', emprendimientosController.actualizarEmprendimiento);
 
 // Eliminar un emprendimiento
 router.delete('/:id', emprendimientosController.eliminarEmprendimiento);
+
+// Solo un emprendimiento puede actualizar su propio perfil:
+router.put('/:id',
+  validarToken,
+  autorizar('emprendimiento'),
+  emprendimientosController.actualizarEmprendimiento
+);
 
 module.exports = router;

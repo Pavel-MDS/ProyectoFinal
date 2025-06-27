@@ -35,10 +35,15 @@ const eliminarEmprendimiento = (id, callback) => {
   db.query('DELETE FROM emprendimientos WHERE id = ?', [id], callback);
 };
 
+// Obtener por Correo
+const obtenerEmprendimientoPorCorreo = (correo, cb) =>
+  db.query('SELECT * FROM emprendimientos WHERE correo = ?', [correo], cb);
+
 module.exports = {
   obtenerEmprendimientos,
   obtenerEmprendimientoPorId,
   crearEmprendimiento,
   actualizarEmprendimiento,
-  eliminarEmprendimiento
+  eliminarEmprendimiento,
+  obtenerEmprendimientoPorCorreo
 };
