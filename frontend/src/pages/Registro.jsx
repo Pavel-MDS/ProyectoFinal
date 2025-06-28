@@ -13,11 +13,35 @@ const Registro = () => {
     contacto: '',
     direccion: ''
   });
-  const navigate = useNavigate(); //  redirigir
+
+  const [productos, setProductos] = useState([]);
+  const navigate = useNavigate();
 
   const handleChange = e => {
     const { name, value } = e.target;
     setForm(f => ({ ...f, [name]: value }));
+  };
+
+  const agregarProducto = () => {
+    setProductos([...productos, {
+      nombre: '',
+      categoria: '',
+      descripcion: '',
+      precio: '',
+      imagen: ''
+    }]);
+  };
+
+  const actualizarProducto = (index, campo, valor) => {
+    const nuevos = [...productos];
+    nuevos[index][campo] = valor;
+    setProductos(nuevos);
+  };
+
+  const eliminarProducto = (index) => {
+    const nuevos = [...productos];
+    nuevos.splice(index, 1);
+    setProductos(nuevos);
   };
 
   const handleLogin = async e => {
@@ -25,10 +49,8 @@ const Registro = () => {
     try {
       const payload = { correo: form.correo, contrasena: form.contrasena, tipo: tipoCuenta };
       const { data } = await login(payload);
-      // 1) guardar token y tipo
       localStorage.setItem('token', data.token);
       localStorage.setItem('tipo', tipoCuenta);
-      // 2) redirigir al dashboard adecuado
       if (tipoCuenta === 'usuario') {
         navigate('/dashboard/usuario');
       } else {
@@ -71,11 +93,9 @@ const Registro = () => {
           <p>Regístrate para entrar</p>
           <button onClick={() => setIsLogin(false)}>Registrarse</button>
         </div>
+
         <div className="form-container">
-          <form
-            className={`formulario__login ${isLogin ? 'active' : ''}`}
-            onSubmit={handleLogin}
-          >
+          <form className={`formulario__login ${isLogin ? 'active' : ''}`} onSubmit={handleLogin}>
             <h2>Iniciar Sesión</h2>
             <select
               name="tipoCuenta"
@@ -104,10 +124,7 @@ const Registro = () => {
             <button type="submit">Entrar</button>
           </form>
 
-          <form
-            className={`formulario__register ${!isLogin ? 'active' : ''}`}
-            onSubmit={handleRegister}
-          >
+          <form className={`formulario__register ${!isLogin ? 'active' : ''}`} onSubmit={handleRegister}>
             <h2>Registro</h2>
             <select
               name="tipoCuenta"
@@ -159,6 +176,84 @@ const Registro = () => {
                   onChange={handleChange}
                   required
                 />
+
+                <div className="formulario-productos">
+                  <h4>Agregar productos</h4>
+                  {productos.map((p, i) => (
+                    <div key={i} className="producto-form">
+                      <input
+                        type="text"
+                        placeholder="Nombre del producto"
+                        value={p.nombre}
+                        onChange={(e) => actualizarProducto(i, 'nombre', e.target.value)}
+                        required
+                      />
+                      <input
+                        type="text"
+                        placeholder="Categoría"
+                        value={p.categoria}
+                        onChange={(e) => actualizarProducto(i, 'categoria', e.target.value)}
+                        required
+                      />
+                      <input
+                        type="text"
+                        placeholder="Descripción"
+                        value={p.descripcion}
+                        onChange={(e) => actualizarProducto(i, 'descripcion', e.target.value)}
+                        required
+                      />
+                      <input
+                        type="number"
+                        placeholder="Precio"
+                        value={p.precio}
+                        onChange={(e) => actualizarProducto(i, 'precio', e.target.value)}
+                        required
+                      />
+                      <input
+                        type="text"
+                        placeholder="Nombre de imagen (ej: producto.jpg)"
+                        value={p.imagen}
+                        onChange={(e) => actualizarProducto(i, 'imagen', e.target.value)}
+                        required
+                      />
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const producto = productos[i];
+                            if (
+                              !producto.nombre ||
+                              !producto.categoria ||
+                              !producto.descripcion ||
+                              !producto.precio ||
+                              !producto.imagen
+                            ) {
+                              alert('Por favor, completa todos los campos del producto antes de subirlo.');
+                              return;
+                            }
+
+                            const productosGuardados = JSON.parse(localStorage.getItem('productos') || '[]');
+                            const nuevoProducto = {
+                              ...producto,
+                              precio: parseFloat(producto.precio),
+                              contacto: form.contacto || 'sin contacto'
+                            };
+                            localStorage.setItem('productos', JSON.stringify([...productosGuardados, nuevoProducto]));
+                            alert('✅ Producto guardado con éxito');
+                          }}
+                        >
+                          Subir este producto
+                        </button>
+                        <button type="button" onClick={() => eliminarProducto(i)}>Eliminar</button>
+                      </div>
+                    </div>
+                  ))}
+
+                  <button type="button" onClick={agregarProducto}>
+  ➕ Agregar nuevo producto
+</button>
+
+                </div>
               </>
             )}
             <button type="submit">Registrarse</button>
