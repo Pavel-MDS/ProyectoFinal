@@ -1,10 +1,9 @@
 import './Navbar.css';
-
 const Navbar = () => {
   return (
     <header className="navbar">
       <div className="container-fluid">
-        <h1>Ferre Corp</h1>
+        <img src="/img/logo.png" alt="Logo Ferre Corp" style={{ width: '150px', height: 'auto' }} />
         <nav>
           <ul className="navbar-links">
             <li><a href="/registro">Registro</a></li>
