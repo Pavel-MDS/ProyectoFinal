@@ -2,20 +2,25 @@ import './Inicio.css';
 
 const Inicio = () => {
   return (
-    <main className="inicio-section">
+    <section className="inicio-section">
       <div className="caja-translucida">
-        <h2>Bienvenido a Ferre Corp</h2>
-        <p>
-          Somos tu ferretería de confianza, ofreciendo productos y servicios de calidad para tus
-          proyectos de construcción, remodelación o mantenimiento.
+        <h1 className="inicio-titulo">
+          Bienvenido a <span className="highlight">Ferre Corp</span>
+        </h1>
+        <p className="inicio-descripcion">
+          Somos tu ferretería de confianza, ofreciendo productos y servicios de calidad 
+          para tus proyectos de construcción, remodelación o mantenimiento.
         </p>
-        <img
-          src="/img/Ferreteria.jpg"
-          alt="Ferretería"
-          className="inicio-imagen"
-        />
+        <div className="inicio-imagen-container">
+          <img
+            src="/img/Ferreteria.jpg"
+            alt="Ferretería Ferre Corp"
+            className="inicio-imagen"
+            loading="lazy"
+          />
+        </div>
       </div>
-    </main>
+    </section>
   );
 };
 

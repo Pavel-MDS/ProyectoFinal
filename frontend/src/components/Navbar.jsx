@@ -1,16 +1,26 @@
+import { Link } from 'react-router-dom';
 import './Navbar.css';
+
 const Navbar = () => {
   return (
     <header className="navbar">
-      <div className="container-fluid">
-        <img src="/img/logo.png" alt="Logo Ferre Corp" style={{ width: '150px', height: 'auto' }} />
-        <nav>
+      <div className="navbar-container">
+        <Link to="/" className="navbar-brand">
+          <img 
+            src="/img/logo.png" 
+            alt="Ferre Corp" 
+            className="navbar-logo" 
+          />
+        </Link>
+
+        <nav className="navbar-nav">
           <ul className="navbar-links">
-            <li><a href="/registro">Registro</a></li>
-            <li><a href="/productos">Productos</a></li>
-            <li><a href="/servicios">Servicios</a></li>
-            <li><a href="/nosotros">Nosotros</a></li>
-            <li><a href="/contacto">Contacto</a></li>
+            <li><Link to="/">Inicio</Link></li>
+            <li><Link to="/registro">Registro</Link></li>
+            <li><Link to="/productos">Productos</Link></li>
+            <li><Link to="/servicios">Servicios</Link></li>
+            <li><Link to="/nosotros">Nosotros</Link></li>
+            <li><Link to="/contacto">Contacto</Link></li>
           </ul>
         </nav>
       </div>
