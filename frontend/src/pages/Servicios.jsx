@@ -9,6 +9,9 @@ const Servicios = () => {
   const [valoracion, setValoracion] = useState(false);
   const [comentario, setComentario] = useState('');
   const [categoriaFiltro, setCategoriaFiltro] = useState('todos');
+  const [mostrarResumen, setMostrarResumen] = useState(false);
+  const [servicioResumen, setServicioResumen] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,6 +39,25 @@ const Servicios = () => {
   };
 
   const confirmarServicio = () => {
+    if (!detalle) return;
+    setServicioResumen({
+      nombre: detalle.nombre,
+      horario: detalle.horario,
+      contacto: detalle.contacto,
+      imagen_url: detalle.imagen_url,
+      valoracion,
+      comentario
+    });
+    setMostrarResumen(true);
+    cerrarModal();
+  };
+
+  const cerrarResumen = () => {
+    setMostrarResumen(false);
+    setServicioResumen(null);
+  };
+
+  const pagarServicio = () => {
     navigate('/registro');
   };
 
@@ -96,6 +118,7 @@ const Servicios = () => {
         </div>
       </div>
 
+      {/* Modal de Detalle */}
       {detalle && (
         <div className="modal-detalle">
           <div className="modal-contenido">
@@ -128,6 +151,30 @@ const Servicios = () => {
             </div>
 
             <button onClick={confirmarServicio}>Adquirir Servicio</button>
+          </div>
+        </div>
+      )}
+
+      {/* Barra lateral de resumen */}
+      {mostrarResumen && servicioResumen && (
+        <div className="resumen-lateral">
+          <div className="resumen-contenido">
+            <h3>Resumen del Servicio</h3>
+            <img
+              src={servicioResumen.imagen_url || '/img/placeholder.jpg'}
+              alt={servicioResumen.nombre}
+              className="resumen-img"
+              onError={(e) => e.target.src = '/img/placeholder.jpg'}
+            />
+            <p><strong>Servicio:</strong> {servicioResumen.nombre}</p>
+            <p><strong>Horario:</strong> {servicioResumen.horario}</p>
+            <p><strong>Contacto:</strong> {servicioResumen.contacto}</p>
+            <p><strong>Valoración:</strong> {servicioResumen.valoracion ? '👍 Me gusta' : 'Sin valoración'}</p>
+            <p><strong>Comentario:</strong> {servicioResumen.comentario || 'Ninguno'}</p>
+            <div className="botones-resumen">
+              <button onClick={cerrarResumen}>Cancelar</button>
+              <button onClick={pagarServicio}>Pagar Servicio</button>
+            </div>
           </div>
         </div>
       )}

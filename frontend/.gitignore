@@ -1,4 +1,4 @@
-# === LOGS ===
+# Logs
 logs
 *.log
 npm-debug.log*
@@ -7,43 +7,18 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# === DEPENDENCIAS ===
-node_modules/
-frontend/node_modules/
-backend/node_modules/
-
-# === OUTPUT / COMPILADOS ===
-dist/
-dist-ssr/
-build/
-frontend/build/
-backend/dist/
-
-# === CONFIGURACIÓN LOCAL / SENSIBLE ===
+node_modules
+dist
+dist-ssr
 *.local
-.env
-.env.*.local
-frontend/.env
-backend/.env
 
-# === EDITORES ===
+# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
-
-# === VISUAL STUDIO / DOTNET ===
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-
-# === SWP y TEMPORALES ===
 *.sw?
-
-# === TEST COVERAGE ===
-coverage/
-
-# === SISTEMAS OPERATIVOS ===
-Thumbs.db
-ehthumbs.db
