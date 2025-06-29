@@ -4,6 +4,7 @@ import Inicio from '../pages/Inicio';
 import Registro from '../pages/Registro';
 import Productos from '../pages/Productos';
 import Servicios from '../pages/Servicios';
+import Contacto from '../pages/Contacto';
 import DashboardUsuario from '../pages/DashboardUsuario';
 import DashboardEmprendimiento from '../pages/DashboardEmprendimiento';
 
@@ -14,6 +15,7 @@ const AppRouter = () => (
       <Route path="/registro" element={<Registro />} />
       <Route path="/productos" element={<Productos />} />
       <Route path="/servicios" element={<Servicios />} />
+      <Route path="/contacto" element={<Contacto />} /> {/* Define la ruta para Contacto */}
     </Route>
       <Route path="/dashboard/usuario" element={<DashboardUsuario />} />
       <Route path="/dashboard/emprendimiento" element={<DashboardEmprendimiento />} />
