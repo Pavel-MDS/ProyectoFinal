@@ -7,6 +7,8 @@ const Productos = () => {
   const [categoriaFiltro, setCategoriaFiltro] = useState('todos');
   const [seleccionados, setSeleccionados] = useState([]);
   const [detalle, setDetalle] = useState(null);
+  const [valoracion, setValoracion] = useState(false);
+  const [comentario, setComentario] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,6 +51,8 @@ const Productos = () => {
 
   const manejarSeleccion = (producto) => {
     setDetalle({ ...producto, cantidad: 1 });
+    setValoracion(false);
+    setComentario('');
   };
 
   const actualizarCantidad = (cantidad) => {
@@ -60,18 +64,33 @@ const Productos = () => {
     };
 
     setDetalle(actualizado);
+  };
 
-    const yaExisteIndex = seleccionados.findIndex(p => p.nombre === actualizado.nombre);
+  const confirmarSeleccion = () => {
+    if (!detalle) return;
+
+    const productoFinal = {
+      ...detalle,
+      valoracion: valoracion,
+      comentario: comentario.trim()
+    };
+
+    const yaExisteIndex = seleccionados.findIndex(p => p.nombre === productoFinal.nombre);
     let nuevosSeleccionados;
 
     if (yaExisteIndex >= 0) {
       nuevosSeleccionados = [...seleccionados];
-      nuevosSeleccionados[yaExisteIndex] = actualizado;
+      nuevosSeleccionados[yaExisteIndex] = productoFinal;
     } else {
-      nuevosSeleccionados = [actualizado, ...seleccionados].slice(0, 5);
+      nuevosSeleccionados = [productoFinal, ...seleccionados].slice(0, 5);
     }
 
     setSeleccionados(nuevosSeleccionados);
+    
+    // Resetear el modal
+    setDetalle(null);
+    setValoracion(false);
+    setComentario('');
   };
 
   const eliminarSeleccion = (index) => {
@@ -88,6 +107,12 @@ const Productos = () => {
 
     localStorage.setItem('carrito', JSON.stringify(seleccionados));
     navigate('/checkout');
+  };
+
+  const cerrarModal = () => {
+    setDetalle(null);
+    setValoracion(false);
+    setComentario('');
   };
 
   useEffect(() => {
@@ -152,9 +177,24 @@ const Productos = () => {
                 <ul className="lista-seleccionados">
                   {seleccionados.map((p, i) => (
                     <li key={i} className="item-seleccionado">
-                      <span>
-                        {p.nombre} (x{p.cantidad}) - S/ {(p.precio * p.cantidad).toFixed(2)}
-                      </span>
+                      <div className="info-producto-seleccionado">
+                        <span className="nombre-cantidad">
+                          {p.nombre} (x{p.cantidad})
+                        </span>
+                        <span className="precio-total">
+                          S/ {(p.precio * p.cantidad).toFixed(2)}
+                        </span>
+                        {p.valoracion && (
+                          <span className="valoracion-icono" title="Te gusta este producto">
+                            👍
+                          </span>
+                        )}
+                        {p.comentario && (
+                          <div className="comentario-preview" title={p.comentario}>
+                            💬 "{p.comentario.length > 30 ? p.comentario.substring(0, 30) + '...' : p.comentario}"
+                          </div>
+                        )}
+                      </div>
                       <button className="btn-eliminar" onClick={() => eliminarSeleccion(i)}>×</button>
                     </li>
                   ))}
@@ -176,12 +216,23 @@ const Productos = () => {
       {detalle && (
         <div className="modal-detalle">
           <div className="modal-contenido">
-            <button className="cerrar-modal" onClick={() => setDetalle(null)}>×</button>
+            <button className="cerrar-modal" onClick={cerrarModal}>×</button>
             <h3>{detalle.nombre}</h3>
             <div className="detalle-info">
+              <div className="producto-detalle-imagen">
+                <img
+                  src={detalle.imagen || `/img/${detalle.imagenNombre || 'placeholder.jpg'}`}
+                  alt={detalle.nombre}
+                  onError={(e) => {
+                    e.target.src = '/img/placeholder.jpg';
+                  }}
+                />
+              </div>
+              
               <p><strong>Descripción:</strong> {detalle.descripcion}</p>
               <p><strong>Contacto:</strong> {detalle.contacto}</p>
               <p><strong>Precio unitario:</strong> S/ {detalle.precio.toFixed(2)}</p>
+              
               <div className="cantidad-control">
                 <label htmlFor="det-cantidad"><strong>Cantidad:</strong></label>
                 <input
@@ -192,14 +243,43 @@ const Productos = () => {
                   onChange={(e) => actualizarCantidad(e.target.value)}
                 />
               </div>
+
+              {/* Sección de valoración */}
+              <div className="valoracion-section">
+                <label><strong>¿Te gusta este producto?</strong></label>
+                <div className="valoracion-control">
+                  <button
+                    className={`btn-valoracion ${valoracion ? 'activo' : ''}`}
+                    onClick={() => setValoracion(!valoracion)}
+                    type="button"
+                  >
+                    <span className="icono-mano">👍</span>
+                    <span>{valoracion ? 'Me gusta' : 'Dar me gusta'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Sección de comentarios */}
+              <div className="comentario-section">
+                <label htmlFor="comentario-producto"><strong>Comentario sobre el producto:</strong></label>
+                <textarea
+                  id="comentario-producto"
+                  placeholder="Comparte tu opinión sobre este producto..."
+                  value={comentario}
+                  onChange={(e) => setComentario(e.target.value)}
+                  maxLength="200"
+                  rows="3"
+                />
+                <div className="contador-caracteres">
+                  {comentario.length}/200 caracteres
+                </div>
+              </div>
+
               <button
                 className="btn-confirmar"
-                onClick={() => {
-                  actualizarCantidad(detalle.cantidad);
-                  setDetalle(null);
-                }}
+                onClick={confirmarSeleccion}
               >
-                Confirmar
+                Confirmar Selección
               </button>
             </div>
           </div>

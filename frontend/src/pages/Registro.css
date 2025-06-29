@@ -32,7 +32,7 @@ main {
   margin: auto;
 }
 
-/* Paneles traseros */
+/* Paneles traseros - Diseño horizontal (desktop) */
 .caja__trasera {
   position: relative;
   width: 100%;
@@ -42,7 +42,6 @@ main {
   backdrop-filter: blur(10px);
   border-radius: 20px;
   overflow: hidden;
-  position: relative;
   height: 500px;
 }
 
@@ -66,7 +65,6 @@ main {
 .register-mode .form-container {
   left: 50%;
 }
-
 
 .caja__trasera-login,
 .caja__trasera-register {
@@ -108,28 +106,17 @@ main {
   color: #46a2fd;
 }
 
-.login-mode .form-container { left: 0; }
-.register-mode .form-container { left: 50%; }
-
-
-
 /* Formularios superpuestos */
-.caja__trasera-login,
-.caja__trasera-register {
-  position: relative; /* contenedor de los formularios */
-  overflow: hidden;   /* evita que sobresalga */
-}
-
 .formulario__login,
 .formulario__register {
   display: none;
-  /* ancho completo del contenedor */
   width: 100%;
   height: 100%;
   padding: 30px 20px;
   background: white;
   border-radius: 0 0 10px 10px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  overflow-y: auto;
 }
 
 .formulario__login.active,
@@ -177,6 +164,43 @@ main {
   background-color: #218838;
 }
 
+/* Estilos para productos */
+.formulario-productos {
+  margin-top: 20px;
+}
+
+.formulario-productos h4 {
+  color: #46a2fd;
+  margin-bottom: 15px;
+}
+
+.producto-form {
+  border: 1px solid #e0e0e0;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.producto-form button {
+  padding: 8px 16px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.producto-form button:first-of-type {
+  background-color: #007bff;
+  color: white;
+}
+
+.producto-form button:last-of-type {
+  background-color: #dc3545;
+  color: white;
+}
+
 /* Panel Emprendedor */
 #panel-emprendedor {
   background: white;
@@ -190,30 +214,118 @@ main {
   display: none;
 }
 
-.caja__trasera { position: relative; }
-.form-container {
-  position: absolute;
-  top: 0; left: 0;
-  width: 50%; height: 100%;
-  transition: left 0.4s ease;
-  z-index: 2;
-}
-
-/* Responsive */
+/* RESPONSIVE - Diseño vertical para móviles */
 @media screen and (max-width: 850px) {
+  main {
+    margin-top: 50px;
+    padding: 10px;
+  }
+
+  /* Cambiar a diseño vertical */
   .caja__trasera {
     flex-direction: column;
     height: auto;
+    min-height: 600px;
   }
 
+  /* Los paneles ahora ocupan 50% de altura cada uno */
   .caja__trasera-login,
   .caja__trasera-register {
     width: 100%;
-    padding: 40px 20px;
+    height: 50%;
+    padding: 20px;
+    flex: none;
+  }
+
+  /* El contenedor de formularios ahora se mueve verticalmente */
+  .form-container {
+    width: 100%;
+    height: 50%;
+    transition: top 0.4s ease;
+    left: 0 !important; /* Siempre en la izquierda */
+  }
+
+  /* Posicionamiento vertical */
+  .login-mode .form-container {
+    top: 0; /* Sobre el panel superior */
+  }
+
+  .register-mode .form-container {
+    top: 50%; /* Sobre el panel inferior */
+  }
+
+  /* Ajustar formularios para móvil */
+  .formulario__login,
+  .formulario__register {
+    padding: 20px 15px;
+    border-radius: 0 0 20px 20px;
+  }
+
+  .formulario__login h2,
+  .formulario__register h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+
+  .formulario__login input,
+  .formulario__login select,
+  .formulario__register input,
+  .formulario__register select {
+    margin-top: 10px;
+    padding: 12px;
+    font-size: 16px; /* Evita zoom en iOS */
+  }
+
+  .caja__trasera h3 {
+    font-size: 20px;
+  }
+
+  .caja__trasera p {
+    font-size: 14px;
+    margin-top: 15px;
+  }
+
+  .caja__trasera button {
+    margin-top: 20px;
+    padding: 12px 30px;
+    font-size: 14px;
+  }
+
+  /* Ajustes para formulario de productos en móvil */
+  .producto-form {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .producto-form button {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .producto-form div[style*="display: flex"] {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+}
+
+/* Responsive extra pequeño */
+@media screen and (max-width: 480px) {
+  .contenedor__todo {
+    max-width: 100%;
+  }
+
+  .caja__trasera {
+    margin: 0 5px;
+    border-radius: 15px;
   }
 
   .formulario__login,
   .formulario__register {
-    border-radius: 0 0 20px 20px;
+    padding: 15px 10px;
+  }
+
+  .caja__trasera-login,
+  .caja__trasera-register {
+    padding: 15px 10px;
   }
 }

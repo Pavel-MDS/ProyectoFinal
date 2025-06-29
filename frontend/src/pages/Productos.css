@@ -150,15 +150,49 @@
   list-style: none;
   padding: 0;
   margin: 20px 0;
-  max-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
 }
 
 .item-seleccionado {
   display: flex;
   justify-content: space-between;
-  padding: 8px 0;
+  align-items: flex-start;
+  padding: 12px 0;
   border-bottom: 1px solid #eee;
+  gap: 10px;
+}
+
+.info-producto-seleccionado {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.nombre-cantidad {
+  font-weight: bold;
+  color: #333;
+}
+
+.precio-total {
+  color: #2a7f2f;
+  font-weight: bold;
+}
+
+.valoracion-icono {
+  font-size: 16px;
+  color: #4CAF50;
+}
+
+.comentario-preview {
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border-left: 3px solid #4CAF50;
 }
 
 .btn-eliminar {
@@ -173,6 +207,7 @@
   align-items: center;
   justify-content: center;
   transition: background 0.3s;
+  flex-shrink: 0;
 }
 
 .btn-eliminar:hover {
@@ -226,25 +261,49 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  overflow-y: auto;
+  padding: 20px;
 }
 
 .modal-contenido {
   background: white;
   padding: 30px;
-  border-radius: 8px;
+  border-radius: 12px;
   width: 90%;
-  max-width: 500px;
+  max-width: 600px;
   position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 .cerrar-modal {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   background: none;
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
+  color: #666;
+  transition: color 0.3s;
+}
+
+.cerrar-modal:hover {
+  color: #333;
+}
+
+.producto-detalle-imagen {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.producto-detalle-imagen img {
+  max-width: 200px;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .detalle-info {
@@ -262,19 +321,118 @@
   padding: 8px;
   width: 60px;
   text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Estilos para la sección de valoración */
+.valoracion-section {
+  margin: 25px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.valoracion-section label {
+  display: block;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.valoracion-control {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-valoracion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 2px solid #ddd;
+  background: white;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.btn-valoracion:hover {
+  border-color: #4CAF50;
+  background: #f0f8f0;
+}
+
+.btn-valoracion.activo {
+  border-color: #4CAF50;
+  background: #4CAF50;
+  color: white;
+  transform: scale(1.05);
+}
+
+.icono-mano {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.btn-valoracion.activo .icono-mano {
+  transform: scale(1.2);
+}
+
+/* Estilos para la sección de comentarios */
+.comentario-section {
+  margin: 25px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.comentario-section label {
+  display: block;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.comentario-section textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.comentario-section textarea:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.contador-caracteres {
+  text-align: right;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #666;
 }
 
 .btn-confirmar {
   background: #4CAF50;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
+  padding: 12px 24px;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
   display: block;
-  margin-top: 20px;
+  margin: 30px auto 0;
   width: 100%;
+  font-size: 16px;
   transition: background 0.3s;
 }
 
@@ -297,6 +455,26 @@
   .producto-imagen img {
     max-height: 250px;
   }
+
+  .modal-contenido {
+    padding: 20px;
+    margin: 10px;
+    max-height: 95vh;
+  }
+
+  .producto-detalle-imagen img {
+    max-width: 150px;
+    max-height: 150px;
+  }
+
+  .valoracion-control {
+    justify-content: center;
+  }
+
+  .btn-valoracion {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -308,5 +486,27 @@
   
   .producto-imagen img {
     max-height: 200px;
+  }
+
+  .modal-contenido {
+    padding: 15px;
+  }
+
+  .valoracion-section,
+  .comentario-section {
+    padding: 15px;
+  }
+
+  .item-seleccionado {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .info-producto-seleccionado {
+    margin-bottom: 10px;
+  }
+
+  .btn-eliminar {
+    align-self: flex-end;
   }
 }
