@@ -10,6 +10,8 @@ const DashboardEmprendimiento = () => {
   const [ventas, setVentas] = useState(0);
   const [calificacion, setCalificacion] = useState(0);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [mostrarFormularioServicio, setMostrarFormularioServicio] = useState(false);
+
   const [nuevoProducto, setNuevoProducto] = useState({
     nombre: '',
     categoria: '',
@@ -19,6 +21,15 @@ const DashboardEmprendimiento = () => {
     imagenNombre: '',
     contacto: ''
   });
+  const [nuevoServicio, setNuevoServicio] = useState({
+    nombre: '',
+    descripcion_corta: '',
+    descripcion_detallada: '',
+    horario: '',
+    contacto: '',
+    imagen_url: ''
+  });
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -127,6 +138,39 @@ const DashboardEmprendimiento = () => {
     alert('✅ Producto agregado con éxito');
   };
 
+  const handleAgregarServicio = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+
+    if (!nuevoServicio.nombre || !nuevoServicio.descripcion_corta || !nuevoServicio.descripcion_detallada || !nuevoServicio.horario || !nuevoServicio.imagen_url) {
+      alert('Por favor completa todos los campos requeridos');
+      return;
+    }
+
+    try {
+      await axios.post('http://localhost:3001/api/servicios', {
+        ...nuevoServicio,
+        emprendimiento_id: emprendimiento?.id
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert('✅ Servicio agregado con éxito');
+      setNuevoServicio({
+        nombre: '',
+        descripcion_corta: '',
+        descripcion_detallada: '',
+        horario: '',
+        contacto: emprendimiento?.contacto || '',
+        imagen_url: ''
+      });
+      setMostrarFormularioServicio(false);
+    } catch (error) {
+      console.error(error);
+      alert('❌ Error al agregar servicio');
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -156,7 +200,11 @@ const DashboardEmprendimiento = () => {
           >
             📦 Agregar Producto
           </button>
-          <button className="btn-secondary">
+          <button 
+           className="btn-secondary"
+           onClick={() => setMostrarFormularioServicio(true)}
+            
+          >
             🛠 Agregar Servicio
           </button>
         </div>
@@ -264,6 +312,79 @@ const DashboardEmprendimiento = () => {
             </div>
           </div>
         )}
+
+        {/* Modal Agregar Servicio */}
+        {mostrarFormularioServicio && (
+          <div className="modal-overlay">
+            <div className="modal-producto">
+              <h2>Agregar Nuevo Servicio</h2>
+              <form onSubmit={handleAgregarServicio}>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="Nombre del servicio*"
+                    value={nuevoServicio.nombre}
+                    onChange={(e) => setNuevoServicio({ ...nuevoServicio, nombre: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <textarea
+                    placeholder="Descripción corta*"
+                    value={nuevoServicio.descripcion_corta}
+                    onChange={(e) => setNuevoServicio({ ...nuevoServicio, descripcion_corta: e.target.value })}
+                    required
+                    rows={2}
+                  />
+                </div>
+                <div className="form-group">
+                  <textarea
+                    placeholder="Descripción detallada*"
+                    value={nuevoServicio.descripcion_detallada}
+                    onChange={(e) => setNuevoServicio({ ...nuevoServicio, descripcion_detallada: e.target.value })}
+                    required
+                    rows={4}
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="Horario*"
+                    value={nuevoServicio.horario}
+                    onChange={(e) => setNuevoServicio({ ...nuevoServicio, horario: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="Contacto"
+                    value={nuevoServicio.contacto}
+                    onChange={(e) => setNuevoServicio({ ...nuevoServicio, contacto: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="URL de la imagen*"
+                    value={nuevoServicio.imagen_url}
+                    onChange={(e) => setNuevoServicio({ ...nuevoServicio, imagen_url: e.target.value })}
+                    required
+                  />
+                  {nuevoServicio.imagen_url && (
+                    <div className="image-preview">
+                      <img src={nuevoServicio.imagen_url} alt="Vista previa" style={{ maxWidth: '100%', maxHeight: '150px' }} />
+                    </div>
+                  )}
+                </div>
+                <div className="modal-buttons">
+                  <button type="button" className="btn-cancelar" onClick={() => setMostrarFormularioServicio(false)}>Cancelar</button>
+                  <button type="submit" className="btn-guardar">Guardar Servicio</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </main>
       <Footer />
     </>
@@ -271,3 +392,4 @@ const DashboardEmprendimiento = () => {
 };
 
 export default DashboardEmprendimiento;
+      

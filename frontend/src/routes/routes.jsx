@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout';
 import Inicio from '../pages/Inicio';
 import Registro from '../pages/Registro';
 import Productos from '../pages/Productos';
+import Servicios from '../pages/Servicios';
 import DashboardUsuario from '../pages/DashboardUsuario';
 import DashboardEmprendimiento from '../pages/DashboardEmprendimiento';
 
@@ -12,6 +13,7 @@ const AppRouter = () => (
       <Route path="/" element={<Inicio />} />
       <Route path="/registro" element={<Registro />} />
       <Route path="/productos" element={<Productos />} />
+      <Route path="/servicios" element={<Servicios />} />
     </Route>
       <Route path="/dashboard/usuario" element={<DashboardUsuario />} />
       <Route path="/dashboard/emprendimiento" element={<DashboardEmprendimiento />} />
