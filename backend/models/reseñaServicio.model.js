@@ -21,7 +21,19 @@ const obtenerReseñasDeServicio = (servicioId, callback) => {
   );
 };
 
+const obtenerReseñasDeUsuario = (usuarioId, callback) => {
+  db.query(
+    `SELECT r.*, s.nombre AS nombre_item, 'servicio' AS tipo
+     FROM reseñas_servicios r
+     JOIN servicios s ON r.servicio_id = s.id
+     WHERE r.usuario_id = ?`,
+    [usuarioId],
+    callback
+  );
+};
+
 module.exports = {
   agregarReseñaServicio,
-  obtenerReseñasDeServicio
+  obtenerReseñasDeServicio,
+  obtenerReseñasDeUsuario
 };

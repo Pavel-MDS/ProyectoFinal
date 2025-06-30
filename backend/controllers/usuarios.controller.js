@@ -1,4 +1,6 @@
 const Usuario = require('../models/usuario.model');
+const ReseñaProducto = require('../models/reseñaProducto.model');
+const ReseñaServicio = require('../models/reseñaServicio.model');
 
 // Obtener todos los usuarios
 const listarUsuarios = (req, res) => {
@@ -46,10 +48,32 @@ const eliminarUsuario = (req, res) => {
   });
 };
 
+// Devuelve todas las reseñas que hizo un usuario (productos + servicios)
+const obtenerReseñasUsuario = (req, res) => {
+  const userId = req.params.id;
+
+  // Primero las de producto
+  ReseñaProducto.obtenerReseñasDeUsuario(userId, (err, prodReviews) => {
+    if (err) return res.status(500).json({ error: 'Error al obtener reseñas de productos' });
+
+    // Luego las de servicio
+    ReseñaServicio.obtenerReseñasDeUsuario(userId, (err2, servReviews) => {
+      if (err2) return res.status(500).json({ error: 'Error al obtener reseñas de servicios' });
+
+      // Unimos ambas listas
+      res.json({
+        productos: prodReviews,
+        servicios: servReviews
+      });
+    });
+  });
+};
+
 module.exports = {
   listarUsuarios,
   obtenerUsuario,
   crearUsuario,
   actualizarUsuario,
-  eliminarUsuario
+  eliminarUsuario,
+  obtenerReseñasUsuario
 };

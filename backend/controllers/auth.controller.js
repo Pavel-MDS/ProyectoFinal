@@ -62,7 +62,10 @@ async function login(req, res) {
         return res.status(401).json({ error: 'Credenciales inválidas' });
       }
 
-      const payload = { id: user.id, tipo };
+      const payload = { 
+        id: user.id, 
+        tipo: tipo  
+      };
       const token = jwt.sign(payload, JWT_SECRET, { expiresIn: TOKEN_EXPIRES_IN });
       res.json({ token });
     });

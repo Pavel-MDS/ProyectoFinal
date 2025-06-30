@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { register, login } from '../services/authService';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Registro.css';
 
@@ -16,6 +18,7 @@ const Registro = () => {
 
   const [productos, setProductos] = useState([]);
   const navigate = useNavigate();
+  const { loginUsuario } = useContext(AuthContext);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -44,22 +47,28 @@ const Registro = () => {
     setProductos(nuevos);
   };
 
-  const handleLogin = async e => {
-    e.preventDefault();
-    try {
-      const payload = { correo: form.correo, contrasena: form.contrasena, tipo: tipoCuenta };
-      const { data } = await login(payload);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('tipo', tipoCuenta);
-      if (tipoCuenta === 'usuario') {
-        navigate('/dashboard/usuario');
-      } else {
-        navigate('/dashboard/emprendimiento');
-      }
-    } catch (err) {
-      alert(err.response?.data?.error || 'Error de autenticación');
+const handleLogin = async e => {
+  e.preventDefault();
+  try {
+    const payload = {
+      correo: form.correo,
+      contrasena: form.contrasena,
+      tipo: tipoCuenta
+    };
+
+    const { data } = await login(payload);
+
+    loginUsuario(data.token, tipoCuenta); // actualiza context y localStorage de forma sincronizada
+
+    if (tipoCuenta === 'usuario') {
+      navigate('/dashboard/usuario');
+    } else {
+      navigate('/dashboard/emprendimiento');
     }
-  };
+  } catch (err) {
+    alert(err.response?.data?.error || 'Error de autenticación');
+  }
+};
 
   const handleRegister = async e => {
     e.preventDefault();
@@ -73,8 +82,21 @@ const Registro = () => {
         direccion: form.direccion
       };
       await register(payload);
-      alert('Registro exitoso, ahora inicia sesión');
-      setIsLogin(true);
+
+      // Login automático tras registrarse
+      const { data } = await login({
+        correo: form.correo,
+        contrasena: form.contrasena,
+        tipo: tipoCuenta
+      });
+
+      loginUsuario(data.token, tipoCuenta);
+
+      if (tipoCuenta === 'usuario') {
+        navigate('/dashboard/usuario');
+      } else {
+        navigate('/dashboard/emprendimiento');
+      }
     } catch (err) {
       alert(err.response?.data?.error || 'Error al registrar');
     }
@@ -103,7 +125,7 @@ const Registro = () => {
               onChange={e => setTipoCuenta(e.target.value)}
             >
               <option value="usuario">Usuario</option>
-              <option value="emprendedor">Emprendedor</option>
+              <option value="emprendimiento">Emprendedor</option>
             </select>
             <input
               type="email"
@@ -132,7 +154,7 @@ const Registro = () => {
               onChange={e => setTipoCuenta(e.target.value)}
             >
               <option value="usuario">Usuario</option>
-              <option value="emprendedor">Emprendedor</option>
+              <option value="emprendimiento">Emprendedor</option>
             </select>
             <input
               type="text"
@@ -158,7 +180,7 @@ const Registro = () => {
               onChange={handleChange}
               required
             />
-            {tipoCuenta === 'emprendedor' && (
+            {tipoCuenta === 'emprendimiento' && (
               <>
                 <input
                   type="text"

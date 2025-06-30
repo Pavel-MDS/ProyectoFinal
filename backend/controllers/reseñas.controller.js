@@ -28,6 +28,13 @@ const agregarReseñaServicio = (req, res) => {
   });
 };
 
+const obtenerTodasReseñasDeProductos = (req, res) => {
+  ReseñaProducto.obtenerTodasReseñas((err, resultados) => {
+    if (err) return res.status(500).json({ error: 'Error al obtener todas las reseñas de productos' });
+    res.json(resultados);
+  });
+};
+
 // Obtener reseñas de un servicio
 const obtenerReseñasServicio = (req, res) => {
   const servicioId = req.params.servicioId;
@@ -41,5 +48,6 @@ module.exports = {
   agregarReseñaProducto,
   obtenerReseñasProducto,
   agregarReseñaServicio,
+  obtenerTodasReseñasDeProductos,
   obtenerReseñasServicio
 };

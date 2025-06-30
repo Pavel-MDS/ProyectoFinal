@@ -6,6 +6,14 @@ const { validarToken, autorizar } = require('../middleware/auth.middleware');
 // Ruta para obtener todos los usuarios
 router.get('/', usuariosController.listarUsuarios);
 
+router.get('/me',
+  validarToken,
+  autorizar('usuario', 'emprendimiento'),
+  (req, res) => {
+    res.json(req.user); // req.user es poblado por el middleware validarToken
+  }
+);
+
 // Ruta para obtener un usuario por ID
 router.get('/:id', usuariosController.obtenerUsuario);
 
@@ -17,6 +25,9 @@ router.put('/:id', usuariosController.actualizarUsuario);
 
 // Ruta para eliminar un usuario
 router.delete('/:id', usuariosController.eliminarUsuario);
+
+// reseñas para usuarios
+router.get('/:id/reseñas', usuariosController.obtenerReseñasUsuario);
 
 // Solo un usuario autenticado puede ver su propio perfil:
 router.get('/:id',

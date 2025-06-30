@@ -6,6 +6,7 @@ const reseñasController = require('../controllers/reseñas.controller');
 
 // Reseñas de productos
 router.post('/producto', reseñasController.agregarReseñaProducto);
+router.get('/producto', reseñasController.obtenerTodasReseñasDeProductos);
 router.get('/producto/:productoId', reseñasController.obtenerReseñasProducto);
 
 // Reseñas de servicios

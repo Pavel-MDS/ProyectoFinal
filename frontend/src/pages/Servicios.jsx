@@ -15,16 +15,10 @@ const Servicios = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/registro');
-      return;
-    }
-
-    axios.get('http://localhost:3001/api/servicios')
-      .then(res => setServicios(res.data))
-      .catch(err => console.error('Error al cargar servicios:', err));
-  }, [navigate]);
+  axios.get('http://localhost:3001/api/servicios')
+    .then(res => setServicios(res.data))
+    .catch(err => console.error('Error al cargar servicios:', err));
+  }, []);
 
   const seleccionarServicio = (servicio) => {
     setDetalle(servicio);

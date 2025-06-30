@@ -1,14 +1,18 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useContext } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 import './Dashboard.css';
 
 const DashboardUsuario = () => {
   const [usuario, setUsuario] = useState(null);
   const [stats, setStats] = useState({ compras: 0, favoritos: 0, reseñas: 0 });
+  const [reviews, setReviews] = useState({ productos: [], servicios: [] });
+  const { logout }= useContext(AuthContext);
   const navigate = useNavigate();
+  const userId= usuario?.id || null;
 
   useEffect(() => {
     const token = localStorage.getItem('token');

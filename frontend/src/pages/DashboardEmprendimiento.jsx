@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 import './Dashboard.css';
 
 const DashboardEmprendimiento = () => {
@@ -36,7 +37,7 @@ const DashboardEmprendimiento = () => {
     const token = localStorage.getItem('token');
     const tipo = localStorage.getItem('tipo');
     
-    if (tipo !== 'emprendedor') {
+    if (tipo !== 'emprendimiento') {
       navigate('/registro');
       return;
     }

@@ -1,6 +1,7 @@
+// controllers/emprendimientos.controller.js
 const Emprendimiento = require('../models/emprendimiento.model');
 
-// Obtener todos los emprendimientos
+// 1) Listar todos los emprendimientos
 const listarEmprendimientos = (req, res) => {
   Emprendimiento.obtenerEmprendimientos((err, resultados) => {
     if (err) return res.status(500).json({ error: 'Error al obtener los emprendimientos' });
@@ -8,7 +9,7 @@ const listarEmprendimientos = (req, res) => {
   });
 };
 
-// Obtener emprendimiento por ID
+// 2) Obtener un emprendimiento por ID
 const obtenerEmprendimiento = (req, res) => {
   const id = req.params.id;
   Emprendimiento.obtenerEmprendimientoPorId(id, (err, resultado) => {
@@ -18,7 +19,7 @@ const obtenerEmprendimiento = (req, res) => {
   });
 };
 
-// Crear emprendimiento
+// 3) Crear un nuevo emprendimiento
 const crearEmprendimiento = (req, res) => {
   const datos = req.body;
   Emprendimiento.crearEmprendimiento(datos, (err, resultado) => {
@@ -27,7 +28,7 @@ const crearEmprendimiento = (req, res) => {
   });
 };
 
-// Actualizar emprendimiento
+// 4) Actualizar un emprendimiento existente
 const actualizarEmprendimiento = (req, res) => {
   const id = req.params.id;
   const datos = req.body;
@@ -37,7 +38,7 @@ const actualizarEmprendimiento = (req, res) => {
   });
 };
 
-// Eliminar emprendimiento
+// 5) Eliminar un emprendimiento
 const eliminarEmprendimiento = (req, res) => {
   const id = req.params.id;
   Emprendimiento.eliminarEmprendimiento(id, (err) => {
@@ -46,10 +47,34 @@ const eliminarEmprendimiento = (req, res) => {
   });
 };
 
+// 6) Obtener perfil del emprendimiento autenticado
+const obtenerMiPerfil = (req, res) => {
+  const id = req.user.id; // poblado por validarToken middleware
+  Emprendimiento.obtenerEmprendimientoPorId(id, (err, rows) => {
+    if (err) return res.status(500).json({ error: 'Error al obtener perfil' });
+    if (!rows.length) return res.status(404).json({ error: 'No existe el emprendimiento' });
+    res.json(rows[0]);
+  });
+};
+
+// 7) Obtener estadísticas del emprendimiento autenticado
+const obtenerEstadisticas = (req, res) => {
+  const id = req.user.id;
+  Emprendimiento.obtenerEstadisticas(id, (err, stats) => {
+    if (err) {
+      console.error('Error al obtener estadísticas:', err);
+      return res.status(500).json({ error: 'Error al calcular estadísticas' });
+    }
+    res.json(stats);
+  });
+};
+
 module.exports = {
   listarEmprendimientos,
   obtenerEmprendimiento,
   crearEmprendimiento,
   actualizarEmprendimiento,
-  eliminarEmprendimiento
+  eliminarEmprendimiento,
+  obtenerMiPerfil,
+  obtenerEstadisticas
 };

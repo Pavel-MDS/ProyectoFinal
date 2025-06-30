@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 import './Productos.css';
 
 const Productos = () => {
@@ -8,8 +10,25 @@ const Productos = () => {
   const [seleccionados, setSeleccionados] = useState([]);
   const [detalle, setDetalle] = useState(null);
   const [valoracion, setValoracion] = useState(false);
+  const [usuario, setUsuario] = useState(null);
   const [comentario, setComentario] = useState('');
+  const { token } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+  if (token) {
+    axios.get('/api/usuarios/me')
+    axios.get('http://localhost:3001/api/usuarios/me', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => setUsuario(res.data))
+      .catch(err => {
+        console.error(err);
+        alert('Sesión expirada, vuelve a iniciar sesión');
+        // opcional: logout() aquí si lo tienes implementado
+      });
+    }
+  }, [token]);
 
   useEffect(() => {
     const productosEstaticos = [
@@ -32,6 +51,8 @@ const Productos = () => {
         imagenNombre: 'casco.jpg'
       }
     ];
+
+
 
     const guardados = JSON.parse(localStorage.getItem('productos') || '[]');
     const todosProductos = [...productosEstaticos, ...guardados];
@@ -66,31 +87,35 @@ const Productos = () => {
     setDetalle(actualizado);
   };
 
-  const confirmarSeleccion = () => {
+  const confirmarSeleccion = async () => {
     if (!detalle) return;
 
-    const productoFinal = {
-      ...detalle,
-      valoracion: valoracion,
-      comentario: comentario.trim()
-    };
-
-    const yaExisteIndex = seleccionados.findIndex(p => p.nombre === productoFinal.nombre);
-    let nuevosSeleccionados;
-
-    if (yaExisteIndex >= 0) {
-      nuevosSeleccionados = [...seleccionados];
-      nuevosSeleccionados[yaExisteIndex] = productoFinal;
-    } else {
-      nuevosSeleccionados = [productoFinal, ...seleccionados].slice(0, 5);
+    if (!usuario) {
+      alert('Debes iniciar sesión para dejar una reseña.');
+      return;
     }
 
-    setSeleccionados(nuevosSeleccionados);
-    
-    // Resetear el modal
-    setDetalle(null);
-    setValoracion(false);
-    setComentario('');
+    try {
+      // envíar la reseña al servidor
+      await axios.post('http://localhost:3001/api/reseñas/producto', {
+        usuario_id: usuario.id,
+        producto_id: detalle.id,
+        calificacion: valoracion ? 1 : 0,
+        comentario: comentario.trim()
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      alert('✅ Tu reseña se ha guardado correctamente');
+
+    } catch (err) {
+      console.error(err);
+      alert('❌ No se pudo guardar tu reseña');
+    } finally {
+      setDetalle(null);
+      setValoracion(false);
+      setComentario('');
+    }
   };
 
   const eliminarSeleccion = (index) => {
@@ -114,13 +139,6 @@ const Productos = () => {
     setValoracion(false);
     setComentario('');
   };
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/registro');
-    }
-  }, [navigate]);
 
   return (
     <main className="productos-container">

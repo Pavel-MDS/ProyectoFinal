@@ -13,8 +13,8 @@ const obtenerProductos = (callback) => {
 // Insertar producto
 const crearProducto = (datos, callback) => {
   const {
-    nombre, precio, descripcion, unidades_disponibles, imagen_url,
-    tipo_producto_id, emprendimiento_id
+    nombre, precio, descripcion, unidades_disponibles,
+    imagen_url, tipo_producto_id, emprendimiento_id
   } = datos;
 
   db.query(
@@ -28,7 +28,13 @@ const crearProducto = (datos, callback) => {
 
 // Obtener un producto por ID
 const obtenerProductoPorId = (id, callback) => {
-  db.query('SELECT * FROM productos WHERE id = ?', [id], callback);
+  db.query(`
+    SELECT p.*, t.nombre AS tipo_nombre, e.nombre_negocio, e.contacto
+    FROM productos p
+    LEFT JOIN tipos_producto t ON p.tipo_producto_id = t.id
+    LEFT JOIN emprendimientos e ON p.emprendimiento_id = e.id
+    WHERE p.id = ?
+  `, [id], callback);
 };
 
 module.exports = {

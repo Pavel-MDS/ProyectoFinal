@@ -196,6 +196,17 @@ body, #root {
   }
 }
 
+.reviews-section {
+  margin-top: 2rem;
+}
+.review-card {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+
 /* Estilos base... */
 
 /* Nuevos estilos para el formulario de productos */
