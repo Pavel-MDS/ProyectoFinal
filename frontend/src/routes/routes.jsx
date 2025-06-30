@@ -5,10 +5,12 @@ import Inicio   from '../pages/Inicio';
 import Registro from '../pages/Registro';
 import Productos from '../pages/Productos';
 import Servicios from '../pages/Servicios';
+import Contacto from '../pages/Contacto';
 import DashboardUsuario from '../pages/DashboardUsuario';
 import DashboardEmprendimiento from '../pages/DashboardEmprendimiento';
 import ProtectedRoute from './ProtectedRoute';
 
+<<<<<<< HEAD
 export default function AppRoutes() {
   return (
     <Routes>
@@ -17,7 +19,7 @@ export default function AppRoutes() {
         <Route path="registro" element={<Registro />} />
         <Route path="productos" element={<Productos />} />
         <Route path="servicios" element={<Servicios />} />
-
+        <Route path="contacto" element={<Contacto />} />
         {/* Dashboards protegidos */}
         <Route
           path="dashboard/usuario"
