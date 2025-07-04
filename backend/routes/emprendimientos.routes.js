@@ -5,6 +5,7 @@ const router = express.Router();
 const emprendimientosController = require('../controllers/emprendimientos.controller');
 const { validarToken, autorizar } = require('../middleware/auth.middleware');
 
+
 // Listar todos los emprendimientos (público)
 router.get('/', emprendimientosController.listarEmprendimientos);
 
@@ -30,5 +31,7 @@ router.post('/', emprendimientosController.crearEmprendimiento);
 
 // Eliminar emprendimiento por ID
 router.delete('/:id', emprendimientosController.eliminarEmprendimiento);
+// Obetener contenido
+router.get('/:id/contenido', emprendimientosController.obtenerContenido);
 
 module.exports = router;

@@ -73,6 +73,33 @@ const obtenerEstadisticas = (idEmprendimiento, callback) => {
     });
   });
 };
+const obtenerContenidoPorEmprendimiento = (emprendimientoId, callback) => {
+  const queryProductos = `
+    SELECT id, nombre, descripcion, precio, imagen_url, 'producto' AS tipo
+    FROM productos
+    WHERE emprendimiento_id = ?
+  `;
+
+  const queryServicios = `
+    SELECT id, nombre, descripcion_corta AS descripcion, horario, imagen_url, 'servicio' AS tipo
+    FROM servicios
+    WHERE emprendimiento_id = ?
+  `;
+
+  // Ejecutar ambas consultas en paralelo
+  db.query(queryProductos, [emprendimientoId], (errProductos, productos) => {
+    if (errProductos) return callback(errProductos);
+
+    db.query(queryServicios, [emprendimientoId], (errServicios, servicios) => {
+      if (errServicios) return callback(errServicios);
+
+      // Opcional: combinar en un solo array
+      const contenido = [...productos, ...servicios];
+      callback(null, contenido);
+    });
+  });
+};
+
 
 module.exports = {
   obtenerEmprendimientos,
@@ -81,5 +108,6 @@ module.exports = {
   actualizarEmprendimiento,
   eliminarEmprendimiento,
   obtenerEmprendimientoPorCorreo,
-  obtenerEstadisticas
+  obtenerEstadisticas,
+  obtenerContenidoPorEmprendimiento
 };

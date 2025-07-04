@@ -12,6 +12,9 @@ const DashboardEmprendimiento = () => {
   const [calificacion, setCalificacion] = useState(0);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mostrarFormularioServicio, setMostrarFormularioServicio] = useState(false);
+  const [servicios, setServicios] = useState([]);
+  const [productos, setProductos] = useState([]);
+
 
   const [nuevoProducto, setNuevoProducto] = useState({
     nombre: '',
@@ -138,6 +141,27 @@ const DashboardEmprendimiento = () => {
     setMostrarFormulario(false);
     alert('✅ Producto agregado con éxito');
   };
+  
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!emprendimiento?.id) return;
+
+    axios.get(`/api/emprendimientos/${emprendimiento.id}/contenido`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then(res => {
+      const contenido = res.data;
+      setProductos(contenido.filter(item => item.tipo === 'producto'));
+      setServicios(contenido.filter(item => item.tipo === 'servicio'));
+    })
+    .catch(err => {
+      console.error('Error al obtener contenido:', err);
+    });
+
+  }, [emprendimiento]);
+
+
+
 
   const handleAgregarServicio = async (e) => {
     e.preventDefault();
@@ -182,6 +206,36 @@ const DashboardEmprendimiento = () => {
             Cerrar Sesión
           </button>
         </div>
+        {/* PROBANDO */}
+        <h2>🛒 Productos</h2>
+          {productos?.length === 0 ? (
+            <p>No hay productos registrados.</p>
+          ) : (
+            <ul>
+              {productos.map((p) => (
+                <li key={`prod-${p.id}`}>
+                  <strong>{p.nombre}</strong> – S/. {Number(p.precio).toFixed(2)}<br />
+                  <span>{p.descripcion}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <h2>🛠 Servicios</h2>
+          {servicios?.length === 0 ? (
+            <p>No hay servicios registrados.</p>
+          ) : (
+            <ul>
+              {servicios.map((s) => (
+                <li key={`serv-${s.id}`}>
+                  <strong>{s.nombre}</strong><br />
+                  <span>{s.descripcion || s.descripcion_corta}</span><br />
+                  <em>Horario: {s.horario}</em>
+                </li>
+              ))}
+            </ul>
+          )}
+
         
         <div className="stats-grid">
           <div className="stat-card">

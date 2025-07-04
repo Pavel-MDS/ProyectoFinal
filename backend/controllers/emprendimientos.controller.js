@@ -68,6 +68,14 @@ const obtenerEstadisticas = (req, res) => {
     res.json(stats);
   });
 };
+const obtenerContenido = (req, res) => {
+  const id = req.params.id;
+
+  Emprendimiento.obtenerContenidoPorEmprendimiento(id, (err, data) => {
+    if (err) return res.status(500).json({ error: 'Error al obtener contenido' });
+    res.json(data);
+  });
+};
 
 module.exports = {
   listarEmprendimientos,
@@ -76,5 +84,6 @@ module.exports = {
   actualizarEmprendimiento,
   eliminarEmprendimiento,
   obtenerMiPerfil,
-  obtenerEstadisticas
+  obtenerEstadisticas,
+  obtenerContenido
 };

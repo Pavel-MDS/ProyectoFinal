@@ -10,7 +10,6 @@ import DashboardUsuario from '../pages/DashboardUsuario';
 import DashboardEmprendimiento from '../pages/DashboardEmprendimiento';
 import ProtectedRoute from './ProtectedRoute';
 
-<<<<<<< HEAD
 export default function AppRoutes() {
   return (
     <Routes>
