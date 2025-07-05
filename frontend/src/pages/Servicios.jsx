@@ -50,6 +50,31 @@ const Servicios = () => {
     setMostrarResumen(false);
     setServicioResumen(null);
   };
+  
+  const handleGuardarReseña = async () => {
+    if (!detalle) return alert('Selecciona un servicio primero');
+    try {
+      // usa la URL absoluta para no depender de defaults
+      await axios.post(
+        'http://localhost:3001/api/resenas/servicio',
+        {
+          servicio_id: detalle.id,
+          calificacion: valoracion ? 1 : 0,
+          comentario
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      alert('Reseña guardada');
+      cerrarModal();
+    } catch (e) {
+      console.error(e.response || e);
+      alert('No se pudo guardar la reseña');
+    }
+  };
 
   const pagarServicio = () => {
     navigate('/registro');
@@ -143,8 +168,10 @@ const Servicios = () => {
               />
               <div>{comentario.length}/200 caracteres</div>
             </div>
-
-            <button onClick={confirmarServicio}>Adquirir Servicio</button>
+            <div className="botones-servicio">
+              <button onClick={confirmarServicio}>Adquirir Servicio</button>
+              <button onClick={handleGuardarReseña}>Guardar Reseña</button>
+            </div>
           </div>
         </div>
       )}

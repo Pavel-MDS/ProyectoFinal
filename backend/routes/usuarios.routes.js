@@ -3,9 +3,10 @@ const router = express.Router();
 const usuariosController = require('../controllers/usuarios.controller');
 const { validarToken, autorizar } = require('../middleware/auth.middleware');
 
+/*
 // Ruta para obtener todos los usuarios
 router.get('/', usuariosController.listarUsuarios);
-
+*/
 router.get('/me',
   validarToken,
   autorizar('usuario', 'emprendimiento'),
@@ -27,7 +28,7 @@ router.put('/:id', usuariosController.actualizarUsuario);
 router.delete('/:id', usuariosController.eliminarUsuario);
 
 // reseñas para usuarios
-router.get('/:id/reseñas', usuariosController.obtenerReseñasUsuario);
+router.get('/:id/resenas', usuariosController.obtenerResenasUsuario);
 
 // Solo un usuario autenticado puede ver su propio perfil:
 router.get('/:id',
