@@ -1,0 +1,59 @@
+.nosotros-container {
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f8f9fc;
+}
+
+.nosotros-banner {
+  text-align: center;
+  background: #3f51b5;
+  color: white;
+  padding: 3rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.nosotros-info {
+  margin-bottom: 2rem;
+}
+
+.nosotros-info h2 {
+  color: #3f51b5;
+  margin-top: 1.5rem;
+}
+
+.nosotros-info ul {
+  list-style: none;
+  padding: 0;
+}
+
+.nosotros-info ul li {
+  margin: 0.5rem 0;
+}
+
+.nosotros-equipo {
+  text-align: center;
+}
+
+.miembros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.miembro {
+  max-width: 200px;
+}
+
+.miembro img {
+  width: 100%;
+  border-radius: 50%;
+  border: 3px solid #3f51b5;
+}
+
+.miembro p {
+  margin-top: 0.5rem;
+  font-weight: bold;
+}

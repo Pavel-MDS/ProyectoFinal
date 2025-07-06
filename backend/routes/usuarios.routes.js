@@ -5,33 +5,38 @@ const db = require('../db/connection');
 const usuariosController = require('../controllers/usuarios.controller');
 const { validarToken, autorizar } = require('../middleware/auth.middleware');
 
-// ✅ Ruta para obtener el usuario logueado
-router.get('/me', validarToken, (req, res) => {
-  const { id, tipo } = req.user;
-
-  if (tipo === 'usuario') {
-    db.query('SELECT id, nombre, correo FROM usuarios WHERE id = ?', [id], (err, results) => {
-      if (err || results.length === 0) return res.status(401).json({ error: 'No autorizado' });
-      return res.json(results[0]);
-    });
-  } else if (tipo === 'emprendimiento') {
-    db.query('SELECT id, nombre_negocio AS nombre, correo FROM emprendimientos WHERE id = ?', [id], (err, results) => {
-      if (err || results.length === 0) return res.status(401).json({ error: 'No autorizado' });
-      return res.json(results[0]);
-    });
-  } else {
-    return res.status(401).json({ error: 'Tipo de usuario no válido' });
-  }
-});
-
-// ✅ Rutas CRUD para usuarios
+/*
+// Ruta para obtener todos los usuarios
 router.get('/', usuariosController.listarUsuarios);
+*/
+router.get('/me',
+  validarToken,
+  autorizar('usuario', 'emprendimiento'),
+  (req, res) => {
+    res.json(req.user); // req.user es poblado por el middleware validarToken
+  }
+);
+
+// Ruta para obtener un usuario por ID
 router.get('/:id', usuariosController.obtenerUsuario);
+
+// Ruta para crear un nuevo usuario
 router.post('/', usuariosController.crearUsuario);
+
+// Ruta para actualizar un usuario existente
 router.put('/:id', usuariosController.actualizarUsuario);
+
+// Ruta para eliminar un usuario
 router.delete('/:id', usuariosController.eliminarUsuario);
 
-// ✅ Reseñas de un usuario
-router.get('/:id/reseñas', usuariosController.obtenerReseñasUsuario);
+// reseñas para usuarios
+router.get('/:id/resenas', usuariosController.obtenerResenasUsuario);
+
+// Solo un usuario autenticado puede ver su propio perfil:
+router.get('/:id',
+  validarToken,
+  autorizar('usuario'),
+  usuariosController.obtenerUsuario
+);
 
 module.exports = router;

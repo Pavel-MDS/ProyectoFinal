@@ -44,41 +44,6 @@ const Productos = () => {
   }
 }, [token]);
 
-
-  useEffect(() => {
-    const productosEstaticos = [
-      {
-        nombre: 'Bota Liviana',
-        precio: 25.00,
-        categoria: 'botas',
-        contacto: 'empresa@ejemplo.com',
-        descripcion: 'Flexible y versátil para todo tipo de superficies.',
-        imagen: null,
-        imagenNombre: 'bota.jpg'
-      },
-      {
-        nombre: 'Casco para ingeniero',
-        precio: 35.00,
-        categoria: 'cascos',
-        contacto: 'empresa2@ejemplo.com',
-        descripcion: 'Con rachet flexible.',
-        imagen: null,
-        imagenNombre: 'casco.jpg'
-      }
-    ];
-
-
-
-    const guardados = JSON.parse(localStorage.getItem('productos') || '[]');
-    const todosProductos = [...productosEstaticos, ...guardados];
-    const productosUnicos = todosProductos.reduce((acc, current) => {
-      const existe = acc.find(item => item.nombre === current.nombre);
-      return existe ? acc : [...acc, current];
-    }, []);
-
-    setProductos(productosUnicos);
-  }, []);
-
   const filtrarProductos = () => {
     return productos.filter(p =>
       categoriaFiltro === 'todos' || p.categoria === categoriaFiltro
@@ -109,7 +74,7 @@ const Productos = () => {
     return;
   }
   try {
-    await axios.post('http://localhost:3001/api/reseñas/producto', {
+    await axios.post('http://localhost:3001/api/resenas/producto', {
       
       producto_id: detalle.id,
       calificacion: valoracion ? 1 : 0,

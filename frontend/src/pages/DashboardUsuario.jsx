@@ -25,6 +25,16 @@ const DashboardUsuario = () => {
       .catch(console.error);
   }, []);
 
+    useEffect(() => {
+    const headers = { Authorization: `Bearer ${localStorage.getItem('token')}` };
+    axios.get('/api/usuarios/me', { headers }).then(res => setUsuario(res.data));
+    axios.get('/api/usuarios/estadisticas', { headers }).then(res => setStats(res.data));
+    axios.get('/api/resenas/usuario', { headers })
+      .then(res => setReviews(res.data))
+      .catch(console.error);
+  }, []);
+  
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('tipo');
@@ -53,8 +63,37 @@ const DashboardUsuario = () => {
             <p>📝 Reseñas hechas</p>
           </div>
         </div>
+        
+        <section className="mis-reseñas">
+        <h2>Mis reseñas</h2>
+
+        <div className="reseñas-productos">
+          <h3>Productos</h3>
+          {reviews.productos.length === 0
+            ? <p>No has reseñado ningún producto aún.</p>
+            : reviews.productos.map(r => (
+                <div key={r.id} className="review-card">
+                  <strong>{r.nombre_item}</strong> – {r.calificacion}⭐
+                  <p>{r.comentario}</p>
+                </div>
+              ))
+          }
+        </div>
+
+        <div className="reseñas-servicios">
+          <h3>Servicios</h3>
+          {reviews.servicios.length === 0
+            ? <p>No has reseñado ningún servicio aún.</p>
+            : reviews.servicios.map(r => (
+                <div key={r.id} className="review-card">
+                  <strong>{r.nombre_item}</strong> – {r.calificacion}⭐
+                  <p>{r.comentario}</p>
+                </div>
+              ))
+          }
+        </div>
+      </section>
       </main>
-      <Footer />
     </>
   );
 };

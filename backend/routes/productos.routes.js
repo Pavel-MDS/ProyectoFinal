@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { validarToken, autorizar } = require('../middleware/auth.middleware');
+const { authenticateToken } = require('../middleware/auth.middleware');
 const db = require('../db/connection');
 
 // Obtener todos los productos
@@ -18,22 +18,22 @@ router.get('/', (req, res) => {
 });
 
 // Crear producto (solo para emprendedores autenticados)
-router.post('/', validarToken, autorizar('emprendimiento'), (req, res) => {
-  const emprendimiento_id = req.user.id;
-  const { nombre, descripcion, precio, tipo_producto_id, imagen_url } = req.body;
+router.post('/productos', authenticateToken, async (req, res) => {
+  const { nombre, descripcion, precio, imagen, categoria, emprendimiento_id } = req.body;
+  try {
+    const tipo = await db.query('SELECT id FROM tipos_producto WHERE LOWER(nombre) = ?', [categoria.toLowerCase()]);
+    if (tipo.length === 0) return res.status(400).json({ error: 'Categoría no válida' });
 
-  db.query(
-    `INSERT INTO productos (nombre, descripcion, precio, tipo_producto_id, imagen_url, emprendimiento_id)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [nombre, descripcion, precio, tipo_producto_id, imagen_url, emprendimiento_id],
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ error: 'Error al crear producto' });
-      }
-      res.status(201).json({ mensaje: 'Producto creado', id: result.insertId });
-    }
-  );
+    const result = await db.query(
+      'INSERT INTO productos (nombre, descripcion, precio, imagen_url, tipo_producto_id, emprendimiento_id) VALUES (?, ?, ?, ?, ?, ?)',
+      [nombre, descripcion, precio, imagen, tipo[0].id, emprendimiento_id]
+    );
+    res.status(201).json({ id: result.insertId });
+  } catch (error) {
+    console.error('Error al insertar producto:', error);
+    res.status(500).json({ error: 'Error interno al guardar el producto' });
+  }
 });
+
 
 module.exports = router;
