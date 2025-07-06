@@ -1,14 +1,24 @@
 const ReseñaProducto = require('../models/reseñaProducto.model');
 const ReseñaServicio = require('../models/reseñaServicio.model');
 
+
+
 // Agregar reseña de producto
 const agregarReseñaProducto = (req, res) => {
-  const datos = req.body;
+  const datos = {
+    usuario_id: req.user.id,  // <- extraído desde el token
+    ...req.body               // producto_id, calificacion, comentario
+  };
+
   ReseñaProducto.agregarReseñaProducto(datos, (err, resultado) => {
-    if (err) return res.status(500).json({ error: 'Error al agregar la reseña de producto' });
+    if (err) {
+      console.error(err); // 👈 agrega esto para que se vea el error exacto en consola
+      return res.status(500).json({ error: 'Error al agregar la reseña de producto' });
+    }
     res.status(201).json({ mensaje: 'Reseña de producto agregada', id: resultado.insertId });
   });
 };
+
 
 // Obtener reseñas de un producto
 const obtenerReseñasProducto = (req, res) => {

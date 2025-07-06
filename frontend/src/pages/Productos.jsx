@@ -15,20 +15,35 @@ const Productos = () => {
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
 
+ useEffect(() => {
+  axios.get('http://localhost:3001/api/productos')
+    .then(res => {
+      setProductos(res.data.map(p => ({
+        id: p.id,
+        nombre: p.nombre,
+        descripcion: p.descripcion,
+        precio: parseFloat(p.precio),
+        categoria: p.tipo_nombre?.toLowerCase() || '',
+        imagen: p.imagen_url,
+        contacto: p.contacto
+      })));
+    })
+    .catch(err => console.error(err));
+}, []);
+
   useEffect(() => {
   if (token) {
-    axios.get('/api/usuarios/me')
     axios.get('http://localhost:3001/api/usuarios/me', {
-      headers: { Authorization: `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}` }
     })
-      .then(res => setUsuario(res.data))
+      .then(res => setUsuario(res.data)) // <- ¡esto lo usa correctamente!
       .catch(err => {
         console.error(err);
         alert('Sesión expirada, vuelve a iniciar sesión');
-        // opcional: logout() aquí si lo tienes implementado
       });
-    }
-  }, [token]);
+  }
+}, [token]);
+
 
   useEffect(() => {
     const productosEstaticos = [
@@ -88,35 +103,29 @@ const Productos = () => {
   };
 
   const confirmarSeleccion = async () => {
-    if (!detalle) return;
+  if (!detalle) return;
+  if (!usuario) {
+    alert('Inicia sesión para opinar');
+    return;
+  }
+  try {
+    await axios.post('http://localhost:3001/api/reseñas/producto', {
+      
+      producto_id: detalle.id,
+      calificacion: valoracion ? 1 : 0,
+      comentario: comentario.trim()
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    alert('✅ Reseña guardada');
+    setSeleccionados(prev => [...prev, { ...detalle, cantidad: detalle.cantidad, valoracion, comentario }]);
+    setDetalle(null);
+  } catch (err) {
+    console.error('Detalles del error:', err.response?.data || err.message);
+    alert(`❌ No se pudo guardar: ${err.response?.data?.error || err.message}`);
+  }
+};
 
-    if (!usuario) {
-      alert('Debes iniciar sesión para dejar una reseña.');
-      return;
-    }
-
-    try {
-      // envíar la reseña al servidor
-      await axios.post('http://localhost:3001/api/reseñas/producto', {
-        usuario_id: usuario.id,
-        producto_id: detalle.id,
-        calificacion: valoracion ? 1 : 0,
-        comentario: comentario.trim()
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      alert('✅ Tu reseña se ha guardado correctamente');
-
-    } catch (err) {
-      console.error(err);
-      alert('❌ No se pudo guardar tu reseña');
-    } finally {
-      setDetalle(null);
-      setValoracion(false);
-      setComentario('');
-    }
-  };
 
   const eliminarSeleccion = (index) => {
     const nuevos = [...seleccionados];

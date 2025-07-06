@@ -28,24 +28,41 @@ const obtenerProducto = (req, res) => {
 
 // Crear producto
 const crearProducto = (req, res) => {
-  const datos = req.body;
+  const datos = {
+    ...req.body,
+    emprendimiento_id: req.user.id  // del token, no del cliente
+  };
 
-  // Validación básica
-  const camposObligatorios = ['nombre', 'precio', 'descripcion', 'unidades_disponibles', 'tipo_producto_id', 'emprendimiento_id'];
+  // Validación: los campos requeridos que *sí* debe enviar el frontend
+  const camposObligatorios = [
+    'nombre',
+    'precio',
+    'descripcion',
+    'unidades_disponibles',
+    'tipo_producto_id' // se selecciona desde el formulario
+  ];
+
   const camposFaltantes = camposObligatorios.filter(campo => !datos[campo]);
 
   if (camposFaltantes.length > 0) {
-    return res.status(400).json({ error: `Faltan campos: ${camposFaltantes.join(', ')}` });
-  }
+  console.log('Campos faltantes:', camposFaltantes); // 👈
+  return res.status(400).json({ error: `Faltan campos: ${camposFaltantes.join(', ')}` });
+}
+
 
   Producto.crearProducto(datos, (err, resultado) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ error: 'Error al crear el producto' });
     }
-    res.status(201).json({ mensaje: 'Producto creado correctamente', id: resultado.insertId });
+
+    res.status(201).json({
+      mensaje: 'Producto creado correctamente',
+      id: resultado.insertId
+    });
   });
 };
+
 
 module.exports = {
   listarProductos,

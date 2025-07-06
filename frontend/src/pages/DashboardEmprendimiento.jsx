@@ -96,51 +96,44 @@ const DashboardEmprendimiento = () => {
     };
     reader.readAsDataURL(file);
   };
+/*******************************/
+  const handleAgregarProducto = async (e) => {
+  e.preventDefault();
+  const token = localStorage.getItem('token');
 
-  const handleAgregarProducto = (e) => {
-    e.preventDefault();
-    
-    // Validación de campos
-    if (!nuevoProducto.nombre || !nuevoProducto.categoria || 
-        !nuevoProducto.descripcion || !nuevoProducto.precio || !nuevoProducto.imagen) {
-      alert('Por favor complete todos los campos');
-      return;
-    }
+  if (!nuevoProducto.nombre || !nuevoProducto.categoria || !nuevoProducto.descripcion || !nuevoProducto.precio || !nuevoProducto.imagenNombre) {
+    alert('Completa todos los campos');
+    return;
+  }
 
-    // Obtener productos existentes
-    const productosGuardados = JSON.parse(localStorage.getItem('productos') || '[]');
-    
-    // Crear nuevo producto
-    const productoParaGuardar = {
+  const categorias = { guantes: 1, cascos: 2, chaleco: 3, botas: 4 };
+  const tipo_producto_id = categorias[nuevoProducto.categoria];
+
+  try {
+    await axios.post('http://localhost:3001/api/productos', {
       nombre: nuevoProducto.nombre,
-      categoria: nuevoProducto.categoria,
       descripcion: nuevoProducto.descripcion,
-      precio: parseFloat(nuevoProducto.precio) || 0,
-      imagen: nuevoProducto.imagen,
-      imagenNombre: nuevoProducto.imagenNombre,
-      contacto: nuevoProducto.contacto
-    };
-
-    // Guardar en localStorage
-    localStorage.setItem(
-      'productos',
-      JSON.stringify([...productosGuardados, productoParaGuardar])
-    );
-
-    // Resetear formulario
-    setNuevoProducto({
-      nombre: '',
-      categoria: '',
-      descripcion: '',
-      precio: '',
-      imagen: null,
-      imagenNombre: '',
-      contacto: nuevoProducto.contacto
+      precio: parseFloat(nuevoProducto.precio),
+      tipo_producto_id,
+      imagen_url: nuevoProducto.imagen // cadena base64 o url
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
     });
-    
+
+    alert('✅ Producto agregado');
     setMostrarFormulario(false);
-    alert('✅ Producto agregado con éxito');
-  };
+    // Refrescar lista
+    const res = await axios.get(`http://localhost:3001/api/emprendimientos/${emprendimiento.id}/contenido`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setProductos(res.data.filter(i => i.tipo === 'producto'));
+  } catch (err) {
+    console.error(err);
+    alert('❌ Error al guardar producto');
+  }
+};
+
+
   
   useEffect(() => {
     const token = localStorage.getItem('token');
