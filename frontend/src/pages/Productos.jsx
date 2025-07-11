@@ -14,35 +14,36 @@ const Productos = () => {
   const [comentario, setComentario] = useState('');
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
-
- useEffect(() => {
-  axios.get('http://localhost:3001/api/productos')
-    .then(res => {
-      setProductos(res.data.map(p => ({
-        id: p.id,
-        nombre: p.nombre,
-        descripcion: p.descripcion,
-        precio: parseFloat(p.precio),
-        categoria: p.tipo_nombre?.toLowerCase() || '',
-        imagen: p.imagen_url,
-        contacto: p.contacto
-      })));
-    })
-    .catch(err => console.error(err));
-}, []);
+  const API = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-  if (token) {
-    axios.get('http://localhost:3001/api/usuarios/me', {
-    headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => setUsuario(res.data)) // <- ¡esto lo usa correctamente!
-      .catch(err => {
-        console.error(err);
-        alert('Sesión expirada, vuelve a iniciar sesión');
-      });
-  }
-}, [token]);
+    axios.get(`${API}/api/productos`)
+      .then(res => {
+        setProductos(res.data.map(p => ({
+          id: p.id,
+          nombre: p.nombre,
+          descripcion: p.descripcion,
+          precio: parseFloat(p.precio),
+          categoria: p.tipo_nombre?.toLowerCase() || '',
+          imagen: p.imagen_url,
+          contacto: p.contacto
+        })));
+      })
+      .catch(err => console.error('Error al cargar productos:', err));
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      axios.get(`${API}/api/usuarios/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(res => setUsuario(res.data))
+        .catch(err => {
+          console.error(err);
+          alert('Sesión expirada, vuelve a iniciar sesión');
+        });
+    }
+  }, [token]);
 
   const filtrarProductos = () => {
     return productos.filter(p =>
@@ -58,39 +59,34 @@ const Productos = () => {
 
   const actualizarCantidad = (cantidad) => {
     if (!detalle) return;
-
-    const actualizado = {
+    setDetalle({
       ...detalle,
       cantidad: Math.max(1, parseInt(cantidad) || 1)
-    };
-
-    setDetalle(actualizado);
+    });
   };
 
   const confirmarSeleccion = async () => {
-  if (!detalle) return;
-  if (!usuario) {
-    alert('Inicia sesión para opinar');
-    return;
-  }
-  try {
-    await axios.post('http://localhost:3001/api/resenas/producto', {
-      
-      producto_id: detalle.id,
-      calificacion: valoracion ? 1 : 0,
-      comentario: comentario.trim()
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    alert('✅ Reseña guardada');
-    setSeleccionados(prev => [...prev, { ...detalle, cantidad: detalle.cantidad, valoracion, comentario }]);
-    setDetalle(null);
-  } catch (err) {
-    console.error('Detalles del error:', err.response?.data || err.message);
-    alert(`❌ No se pudo guardar: ${err.response?.data?.error || err.message}`);
-  }
-};
-
+    if (!detalle) return;
+    if (!usuario) {
+      alert('Inicia sesión para opinar');
+      return;
+    }
+    try {
+      await axios.post(`${API}/api/resenas/producto`, {
+        producto_id: detalle.id,
+        calificacion: valoracion ? 1 : 0,
+        comentario: comentario.trim()
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert('✅ Reseña guardada');
+      setSeleccionados(prev => [...prev, { ...detalle, cantidad: detalle.cantidad, valoracion, comentario }]);
+      setDetalle(null);
+    } catch (err) {
+      console.error('Error al guardar reseña:', err.response?.data || err.message);
+      alert(`❌ No se pudo guardar: ${err.response?.data?.error || err.message}`);
+    }
+  };
 
   const eliminarSeleccion = (index) => {
     const nuevos = [...seleccionados];
@@ -103,7 +99,6 @@ const Productos = () => {
       alert('Por favor seleccione al menos un producto');
       return;
     }
-
     localStorage.setItem('carrito', JSON.stringify(seleccionados));
     navigate('/checkout');
   };
@@ -142,9 +137,7 @@ const Productos = () => {
                 <img
                   src={producto.imagen || `/img/${producto.imagenNombre || 'placeholder.jpg'}`}
                   alt={producto.nombre}
-                  onError={(e) => {
-                    e.target.src = '/img/placeholder.jpg';
-                  }}
+                  onError={(e) => { e.target.src = '/img/placeholder.jpg'; }}
                 />
               </div>
               <div className="producto-info">
@@ -170,17 +163,11 @@ const Productos = () => {
                   {seleccionados.map((p, i) => (
                     <li key={i} className="item-seleccionado">
                       <div className="info-producto-seleccionado">
-                        <span className="nombre-cantidad">
-                          {p.nombre} (x{p.cantidad})
-                        </span>
+                        <span className="nombre-cantidad">{p.nombre} (x{p.cantidad})</span>
                         <span className="precio-total">
                           S/ {(p.precio * p.cantidad).toFixed(2)}
                         </span>
-                        {p.valoracion && (
-                          <span className="valoracion-icono" title="Te gusta este producto">
-                            👍
-                          </span>
-                        )}
+                        {p.valoracion && <span className="valoracion-icono" title="Te gusta este producto">👍</span>}
                         {p.comentario && (
                           <div className="comentario-preview" title={p.comentario}>
                             💬 "{p.comentario.length > 30 ? p.comentario.substring(0, 30) + '...' : p.comentario}"
@@ -192,13 +179,9 @@ const Productos = () => {
                   ))}
                 </ul>
                 <div className="total-section">
-                  <h4>
-                    Total: S/ {seleccionados.reduce((sum, p) => sum + (p.precio * p.cantidad), 0).toFixed(2)}
-                  </h4>
+                  <h4>Total: S/ {seleccionados.reduce((sum, p) => sum + (p.precio * p.cantidad), 0).toFixed(2)}</h4>
                 </div>
-                <button className="btn-comprar" onClick={comprar}>
-                  Proceder al Pago
-                </button>
+                <button className="btn-comprar" onClick={comprar}>Proceder al Pago</button>
               </>
             )}
           </div>
@@ -215,16 +198,13 @@ const Productos = () => {
                 <img
                   src={detalle.imagen || `/img/${detalle.imagenNombre || 'placeholder.jpg'}`}
                   alt={detalle.nombre}
-                  onError={(e) => {
-                    e.target.src = '/img/placeholder.jpg';
-                  }}
+                  onError={(e) => { e.target.src = '/img/placeholder.jpg'; }}
                 />
               </div>
-              
               <p><strong>Descripción:</strong> {detalle.descripcion}</p>
               <p><strong>Contacto:</strong> {detalle.contacto}</p>
               <p><strong>Precio unitario:</strong> S/ {detalle.precio.toFixed(2)}</p>
-              
+
               <div className="cantidad-control">
                 <label htmlFor="det-cantidad"><strong>Cantidad:</strong></label>
                 <input
@@ -236,7 +216,6 @@ const Productos = () => {
                 />
               </div>
 
-              {/* Sección de valoración */}
               <div className="valoracion-section">
                 <label><strong>¿Te gusta este producto?</strong></label>
                 <div className="valoracion-control">
@@ -251,7 +230,6 @@ const Productos = () => {
                 </div>
               </div>
 
-              {/* Sección de comentarios */}
               <div className="comentario-section">
                 <label htmlFor="comentario-producto"><strong>Comentario sobre el producto:</strong></label>
                 <textarea
@@ -262,15 +240,10 @@ const Productos = () => {
                   maxLength="200"
                   rows="3"
                 />
-                <div className="contador-caracteres">
-                  {comentario.length}/200 caracteres
-                </div>
+                <div className="contador-caracteres">{comentario.length}/200 caracteres</div>
               </div>
 
-              <button
-                className="btn-confirmar"
-                onClick={confirmarSeleccion}
-              >
+              <button className="btn-confirmar" onClick={confirmarSeleccion}>
                 Confirmar Selección
               </button>
             </div>

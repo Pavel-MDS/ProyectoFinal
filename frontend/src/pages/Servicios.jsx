@@ -12,13 +12,14 @@ const Servicios = () => {
   const [mostrarResumen, setMostrarResumen] = useState(false);
   const [servicioResumen, setServicioResumen] = useState(null);
 
+  const API = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   useEffect(() => {
-  axios.get('http://localhost:3001/api/servicios')
-    .then(res => setServicios(res.data))
-    .catch(err => console.error('Error al cargar servicios:', err));
-  }, []);
+    axios.get(`${API}/api/servicios`)
+      .then(res => setServicios(res.data))
+      .catch(err => console.error('Error al cargar servicios:', err));
+  }, [API]);
 
   const seleccionarServicio = (servicio) => {
     setDetalle(servicio);
@@ -50,13 +51,15 @@ const Servicios = () => {
     setMostrarResumen(false);
     setServicioResumen(null);
   };
-  
+
   const handleGuardarReseña = async () => {
+    const token = localStorage.getItem('token');
     if (!detalle) return alert('Selecciona un servicio primero');
+    if (!token) return alert('Debes iniciar sesión para enviar una reseña');
+
     try {
-      // usa la URL absoluta para no depender de defaults
       await axios.post(
-        'http://localhost:3001/api/resenas/servicio',
+        `${API}/api/resenas/servicio`,
         {
           servicio_id: detalle.id,
           calificacion: valoracion ? 1 : 0,
@@ -64,15 +67,15 @@ const Servicios = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
+            Authorization: `Bearer ${token}`
           }
         }
       );
-      alert('Reseña guardada');
+      alert('✅ Reseña guardada');
       cerrarModal();
     } catch (e) {
       console.error(e.response || e);
-      alert('No se pudo guardar la reseña');
+      alert('❌ No se pudo guardar la reseña');
     }
   };
 

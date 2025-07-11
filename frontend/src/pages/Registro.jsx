@@ -3,7 +3,7 @@ import { register, login } from '../services/authService';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Registro.css';
-import axios from 'axios'; // ✅ Importado correctamente
+import axios from 'axios';
 
 const Registro = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,10 +15,10 @@ const Registro = () => {
     contacto: '',
     direccion: ''
   });
-
   const [productos, setProductos] = useState([]);
   const navigate = useNavigate();
   const { loginUsuario } = useContext(AuthContext);
+  const API = import.meta.env.VITE_API_URL;
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -57,11 +57,7 @@ const Registro = () => {
       };
       const { data } = await login(payload);
       loginUsuario(data.token, tipoCuenta);
-      if (tipoCuenta === 'usuario') {
-        navigate('/dashboard/usuario');
-      } else {
-        navigate('/dashboard/emprendimiento');
-      }
+      navigate(tipoCuenta === 'usuario' ? '/dashboard/usuario' : '/dashboard/emprendimiento');
     } catch (err) {
       alert(err.response?.data?.error || 'Error de autenticación');
     }
@@ -96,13 +92,13 @@ const Registro = () => {
             !producto.precio || !producto.imagen
           ) continue;
 
-          await axios.post('http://localhost:3001/api/productos', {
+          await axios.post(`${API}/api/productos`, {
             nombre: producto.nombre,
             descripcion: producto.descripcion,
             precio: parseFloat(producto.precio),
             imagen: producto.imagen,
             categoria: producto.categoria,
-            //emprendimiento_id: data.usuario.id // El ID del emprendimiento viene en la respuesta de login
+            correo: form.correo // usamos el correo como referencia del emprendimiento
           }, {
             headers: {
               Authorization: `Bearer ${data.token}`
@@ -111,11 +107,7 @@ const Registro = () => {
         }
       }
 
-      if (tipoCuenta === 'usuario') {
-        navigate('/dashboard/usuario');
-      } else {
-        navigate('/dashboard/emprendimiento');
-      }
+      navigate(tipoCuenta === 'usuario' ? '/dashboard/usuario' : '/dashboard/emprendimiento');
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.error || 'Error al registrar');
@@ -137,6 +129,7 @@ const Registro = () => {
         </div>
 
         <div className="form-container">
+          {/* Formulario de Login */}
           <form className={`formulario__login ${isLogin ? 'active' : ''}`} onSubmit={handleLogin}>
             <h2>Iniciar Sesión</h2>
             <select
@@ -166,6 +159,7 @@ const Registro = () => {
             <button type="submit">Entrar</button>
           </form>
 
+          {/* Formulario de Registro */}
           <form className={`formulario__register ${!isLogin ? 'active' : ''}`} onSubmit={handleRegister}>
             <h2>Registro</h2>
             <select
@@ -253,7 +247,7 @@ const Registro = () => {
                       />
                       <input
                         type="text"
-                        placeholder="Nombre de imagen (ej: producto.jpg)"
+                        placeholder="Nombre de imagen (ej: producto.jpg o base64)"
                         value={p.imagen}
                         onChange={(e) => actualizarProducto(i, 'imagen', e.target.value)}
                         required

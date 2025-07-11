@@ -6,13 +6,14 @@ const Inicio = () => {
   const [productosEstrella, setProductosEstrella] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/api/productos')
+    const API = import.meta.env.VITE_API_URL;
+
+    axios.get(`${API}/api/productos`)
       .then(res => {
-        // Selección arbitraria: productos con precio > 100
         const destacados = res.data.filter(p => p.precio >= 100).slice(0, 4);
         setProductosEstrella(destacados);
       })
-      .catch(console.error);
+      .catch(err => console.error('Error al obtener productos:', err));
   }, []);
 
   return (
