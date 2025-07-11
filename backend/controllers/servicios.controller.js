@@ -22,10 +22,14 @@ const obtenerServicio = (req, res) => {
 const crearServicio = (req, res) => {
   const datos = req.body;
   Servicio.crearServicio(datos, (err, resultado) => {
-    if (err) return res.status(500).json({ error: 'Error al crear el servicio' });
+    if (err) {
+      console.error('Error al crear el servicio:', err); // ✅ Aquí se muestra en la consola
+      return res.status(500).json({ error: 'Error al crear el servicio' });
+    }
     res.status(201).json({ mensaje: 'Servicio creado', id: resultado.insertId });
   });
 };
+
 
 module.exports = {
   listarServicios,

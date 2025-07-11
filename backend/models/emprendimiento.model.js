@@ -99,6 +99,46 @@ const obtenerContenidoPorEmprendimiento = (emprendimientoId, callback) => {
     });
   });
 };
+  // Editar producto por ID, solo si pertenece al emprendimiento
+  const editarProductoPorId = (productoId, emprendimientoId, datos, callback) => {
+    const { nombre, descripcion, precio, imagen_url } = datos;
+    const sql = `
+      UPDATE productos
+      SET nombre = ?, descripcion = ?, precio = ?, imagen_url = ?
+      WHERE id = ? AND emprendimiento_id = ?
+    `;
+    db.query(sql, [nombre, descripcion, precio, imagen_url, productoId, emprendimientoId], callback);
+  };
+
+  // Eliminar producto por ID, solo si pertenece al emprendimiento
+  const eliminarProductoPorId = (productoId, emprendimientoId, callback) => {
+    db.query(
+      'DELETE FROM productos WHERE id = ? AND emprendimiento_id = ?',
+      [productoId, emprendimientoId],
+      callback
+    );
+  };
+
+  // Editar servicio por ID, solo si pertenece al emprendimiento
+  const editarServicioPorId = (servicioId, emprendimientoId, datos, callback) => {
+    const { nombre, descripcion_corta, descripcion_detallada, horario, imagen_url } = datos;
+    const sql = `
+      UPDATE servicios
+      SET nombre = ?, descripcion_corta = ?, descripcion_detallada = ?, horario = ?, imagen_url = ?
+      WHERE id = ? AND emprendimiento_id = ?
+    `;
+    db.query(sql, [nombre, descripcion_corta, descripcion_detallada, horario, imagen_url, servicioId, emprendimientoId], callback);
+  };
+
+  // Eliminar servicio por ID, solo si pertenece al emprendimiento
+  const eliminarServicioPorId = (servicioId, emprendimientoId, callback) => {
+    db.query(
+      'DELETE FROM servicios WHERE id = ? AND emprendimiento_id = ?',
+      [servicioId, emprendimientoId],
+      callback
+    );
+  };
+
 
 
 module.exports = {
@@ -109,5 +149,9 @@ module.exports = {
   eliminarEmprendimiento,
   obtenerEmprendimientoPorCorreo,
   obtenerEstadisticas,
-  obtenerContenidoPorEmprendimiento
+  obtenerContenidoPorEmprendimiento,
+  editarProductoPorId,
+  eliminarProductoPorId,
+  editarServicioPorId,
+  eliminarServicioPorId
 };

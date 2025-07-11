@@ -33,5 +33,18 @@ router.post('/', emprendimientosController.crearEmprendimiento);
 router.delete('/:id', emprendimientosController.eliminarEmprendimiento);
 // Obetener contenido
 router.get('/:id/contenido', emprendimientosController.obtenerContenido);
+//----------------------------------------
+// 1. Editar producto
+router.put('/:emprendimientoId/productos/:productoId', emprendimientosController.editarProducto);
+
+// 2. Eliminar producto
+router.delete('/:emprendimientoId/productos/:productoId', emprendimientosController.eliminarProducto);
+
+// 3. Editar servicio
+router.put('/:emprendimientoId/servicios/:servicioId', emprendimientosController.editarServicio);
+
+// 4. Eliminar servicio
+router.delete('/:emprendimientoId/servicios/:servicioId', emprendimientosController.eliminarServicio);
+
 
 module.exports = router;

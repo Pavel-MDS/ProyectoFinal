@@ -1,6 +1,6 @@
 const db = require('../db/connection');
 
-const agregarReseñaProducto = (datos, callback) => {
+const agregarResenaProducto = (datos, callback) => {
   const { usuario_id, producto_id, calificacion, comentario } = datos;
   db.query(
     `INSERT INTO reseñas_productos (usuario_id, producto_id, calificacion, comentario) 
@@ -10,7 +10,7 @@ const agregarReseñaProducto = (datos, callback) => {
   );
 };
 
-const obtenerReseñasDeProducto = (productoId, callback) => {
+const obtenerResenasDeProducto = (productoId, callback) => {
   db.query(
     `SELECT r.*, u.nombre AS usuario 
      FROM reseñas_productos r 
@@ -21,7 +21,7 @@ const obtenerReseñasDeProducto = (productoId, callback) => {
   );
 };
 
-const obtenerReseñasDeUsuario = (usuarioId, callback) => {
+const obtenerResenasDeUsuario = (usuarioId, callback) => {
   db.query(
     `SELECT r.*, p.nombre AS nombre_item, 'producto' AS tipo
      FROM reseñas_productos r
@@ -32,7 +32,7 @@ const obtenerReseñasDeUsuario = (usuarioId, callback) => {
   );
 };
 
-const obtenerTodasReseñas = (callback) => {
+const obtenerTodasResenas = (callback) => {
   db.query(
     `SELECT r.*, u.nombre AS usuario, p.nombre AS producto 
      FROM reseñas_productos r
@@ -43,8 +43,8 @@ const obtenerTodasReseñas = (callback) => {
 };
 
 module.exports = {
-  agregarReseñaProducto,
-  obtenerReseñasDeProducto,
-  obtenerReseñasDeUsuario,
-  obtenerTodasReseñas
+  agregarResenaProducto,
+  obtenerResenasDeProducto,
+  obtenerResenasDeUsuario,
+  obtenerTodasResenas
 };

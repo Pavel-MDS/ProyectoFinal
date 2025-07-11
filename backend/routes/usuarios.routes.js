@@ -27,7 +27,7 @@ router.put('/:id', usuariosController.actualizarUsuario);
 router.delete('/:id', usuariosController.eliminarUsuario);
 
 // reseñas para usuarios
-router.get('/:id/reseñas', usuariosController.obtenerReseñasUsuario);
+router.get('/:id/resenas', usuariosController.obtenerResenasUsuario);
 
 // Solo un usuario autenticado puede ver su propio perfil:
 router.get('/:id',

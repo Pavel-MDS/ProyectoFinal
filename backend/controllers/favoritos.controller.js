@@ -40,5 +40,5 @@ module.exports = {
   agregarFavoritoProducto,
   obtenerFavoritosProductos,
   agregarFavoritoServicio,
-  obtenerFavoritosServicios
+  obtenerFavoritosServicios,
 };

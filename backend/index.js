@@ -19,7 +19,7 @@ app.use('/api/emprendimientos', require('./routes/emprendimientos.routes'));
 app.use('/api/productos', require('./routes/productos.routes'));
 app.use('/api/servicios', require('./routes/servicios.routes'));
 app.use('/api/ventas', require('./routes/ventas.routes'));
-app.use('/api/reseñas', require('./routes/reseñas.routes'));
+app.use('/api/resenas', require('./routes/resenas.routes'));
 app.use('/api/favoritos', require('./routes/favoritos.routes'));
 // Ruta base para comprobar si el backend está funcionando
 app.get('/', (req, res) => {

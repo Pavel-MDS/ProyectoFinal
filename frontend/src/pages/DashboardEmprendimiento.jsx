@@ -141,6 +141,9 @@ const DashboardEmprendimiento = () => {
     setMostrarFormulario(false);
     alert('✅ Producto agregado con éxito');
   };
+
+
+
   
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -159,6 +162,34 @@ const DashboardEmprendimiento = () => {
     });
 
   }, [emprendimiento]);
+
+ const onEditar = (item) => {
+    // Aquí puedes mostrar un modal con el formulario de edición
+    alert(`Editar ${item.tipo || 'producto/servicio'}: ${item.nombre}`);
+  };
+
+ const onEliminar = (id, tipo) => {
+    const token = localStorage.getItem('token');
+    const confirmacion = window.confirm(`¿Seguro que deseas eliminar este ${tipo}?`);
+    if (!confirmacion) return;
+
+    const endpoint = tipo === 'producto'
+      ? `/api/emprendimientos/${id}/eliminarproducto/${id}`
+      : `/api/emprendimientos/${id}/eliminarservicio`;
+
+    axios.delete(endpoint, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(() => {
+        alert(`${tipo} eliminado correctamente`);
+        // Refrescar la lista
+        setProductos(prev => prev.filter(p => p.id !== id));
+        setServicios(prev => prev.filter(s => s.id !== id));
+      })
+      .catch(err => {
+        console.error(`Error al eliminar ${tipo}:`, err);
+      });
+  };
 
 
 
@@ -195,7 +226,8 @@ const DashboardEmprendimiento = () => {
       alert('❌ Error al agregar servicio');
     }
   };
-
+ 
+  
   return (
     <>
       <Navbar />
@@ -206,36 +238,72 @@ const DashboardEmprendimiento = () => {
             Cerrar Sesión
           </button>
         </div>
-        {/* PROBANDO */}
-        <h2>🛒 Productos</h2>
+         <h2>🛒 Productos</h2>
+      <table border="1" cellPadding="8" cellSpacing="0" style={{ width: '100%', marginBottom: '30px' }}>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
           {productos?.length === 0 ? (
-            <p>No hay productos registrados.</p>
+            <tr>
+              <td colSpan="4" style={{ textAlign: 'center' }}>No hay productos registrados.</td>
+            </tr>
           ) : (
-            <ul>
-              {productos.map((p) => (
-                <li key={`prod-${p.id}`}>
-                  <strong>{p.nombre}</strong> – S/. {Number(p.precio).toFixed(2)}<br />
-                  <span>{p.descripcion}</span>
-                </li>
-              ))}
-            </ul>
+            productos.map((p) => (
+              <tr key={`prod-${p.id}`}>
+                <td>{p.nombre}</td>
+                <td>S/. {Number(p.precio).toFixed(2)}</td>
+                <td>{p.descripcion}</td>
+                <td style={{ textAlign: 'center' }}>
+                  <button onClick={() => onEditar(p)} title="Editar">✏️</button>{' '}
+                  <button onClick={() => onEliminar(p.id, 'producto')} title="Eliminar">🗑️</button>
+                </td>
+              </tr>
+            ))
           )}
+        </tbody>
+      </table>
 
-          <h2>🛠 Servicios</h2>
+      <h2>🛠 Servicios</h2>
+      <table border="1" cellPadding="8" cellSpacing="0" style={{ width: '100%' }}>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Horario</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
           {servicios?.length === 0 ? (
-            <p>No hay servicios registrados.</p>
+            <tr>
+              <td colSpan="4" style={{ textAlign: 'center' }}>No hay servicios registrados.</td>
+            </tr>
           ) : (
-            <ul>
-              {servicios.map((s) => (
-                <li key={`serv-${s.id}`}>
-                  <strong>{s.nombre}</strong><br />
-                  <span>{s.descripcion || s.descripcion_corta}</span><br />
-                  <em>Horario: {s.horario}</em>
-                </li>
-              ))}
-            </ul>
+            servicios.map((s) => (
+              <tr key={`serv-${s.id}`}>
+                <td>{s.nombre}</td>
+                <td>{s.descripcion || s.descripcion_corta}</td>
+                <td>{s.horario}</td>
+                <td style={{ textAlign: 'center' }}>
+                  <button onClick={() => onEditar(s)} title="Editar">✏️</button>{' '}
+                  <button onClick={() => onEliminar(s.id, 'servicio')} title="Eliminar">🗑️</button>
+                </td>
+              </tr>
+            ))
           )}
+        </tbody>
+      </table>
+    
 
+
+
+      
         
         <div className="stats-grid">
           <div className="stat-card">
