@@ -82,6 +82,7 @@ const crearProducto = (req, res) => {
     });
   });
 };
+//*************************
 
 module.exports = {
   listarProductos,

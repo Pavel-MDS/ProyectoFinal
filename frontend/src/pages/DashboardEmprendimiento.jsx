@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import './Dashboard.css';
+import { CgLayoutGrid } from 'react-icons/cg';
 
 const DashboardEmprendimiento = () => {
   const [emprendimiento, setEmprendimiento] = useState(null);
@@ -14,6 +15,7 @@ const DashboardEmprendimiento = () => {
   const [mostrarFormularioServicio, setMostrarFormularioServicio] = useState(false);
   const [servicios, setServicios] = useState([]);
   const [productos, setProductos] = useState([]);
+  const [productoEditando, setProductoEditando] = useState(null);
 
 
   const [nuevoProducto, setNuevoProducto] = useState({
@@ -96,26 +98,28 @@ const DashboardEmprendimiento = () => {
     };
     reader.readAsDataURL(file);
   };
+/************************************/
+
+
 /*******************************/
   const handleAgregarProducto = async (e) => {
   e.preventDefault();
   const token = localStorage.getItem('token');
 
-  if (!nuevoProducto.nombre || !nuevoProducto.categoria || !nuevoProducto.descripcion || !nuevoProducto.precio || !nuevoProducto.imagenNombre) {
+  if (!nuevoProducto.nombre || !nuevoProducto.categoria || !nuevoProducto.descripcion || !nuevoProducto.precio || !nuevoProducto.imagen) {
     alert('Completa todos los campos');
     return;
   }
 
-  const categorias = { guantes: 1, cascos: 2, chaleco: 3, botas: 4 };
-  const tipo_producto_id = categorias[nuevoProducto.categoria];
-
+  
   try {
+    console.log({nuevoProducto})
     await axios.post('http://localhost:3001/api/productos', {
       nombre: nuevoProducto.nombre,
       descripcion: nuevoProducto.descripcion,
       precio: parseFloat(nuevoProducto.precio),
-      tipo_producto_id,
-      imagen_url: nuevoProducto.imagen // cadena base64 o url
+      imagen: nuevoProducto.imagen, // cadena base64 o url
+      categoria: nuevoProducto.categoria  
     }, {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -128,8 +132,8 @@ const DashboardEmprendimiento = () => {
     });
     setProductos(res.data.filter(i => i.tipo === 'producto'));
   } catch (err) {
-    console.error(err);
-    alert('❌ Error al guardar producto');
+    console.error('❌ Error al guardar producto:', err.response?.data || err);
+    alert('❌ Error al guardar producto: ' + (err.response?.data?.error || 'Error interno'));
   }
 };
 

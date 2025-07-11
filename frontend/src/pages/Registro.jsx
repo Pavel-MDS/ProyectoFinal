@@ -102,7 +102,7 @@ const Registro = () => {
             precio: parseFloat(producto.precio),
             imagen: producto.imagen,
             categoria: producto.categoria,
-            emprendimiento_id: data.usuario.id // El ID del emprendimiento viene en la respuesta de login
+            //emprendimiento_id: data.usuario.id // El ID del emprendimiento viene en la respuesta de login
           }, {
             headers: {
               Authorization: `Bearer ${data.token}`

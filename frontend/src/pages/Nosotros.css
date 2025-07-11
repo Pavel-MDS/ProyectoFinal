@@ -57,3 +57,119 @@
   margin-top: 0.5rem;
   font-weight: bold;
 }
+
+.nosotros-container {
+  padding: 2rem;
+  background: #f9f9f9;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.nosotros-banner {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: linear-gradient(to right, #2c3e50, #34495e);
+  color: white;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.nosotros-banner h1 {
+  font-size: 2.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.nosotros-banner p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.nosotros-info {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.nosotros-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+
+.nosotros-card h2 {
+  margin-bottom: 0.8rem;
+  color: #2c3e50;
+}
+
+.nosotros-card p {
+  line-height: 1.6;
+  color: #555;
+}
+
+.nosotros-card.valores ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.nosotros-card.valores li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.nosotros-equipo {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.nosotros-equipo h2 {
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+}
+
+.miembros {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.miembro {
+  max-width: 200px;
+  text-align: center;
+}
+
+.miembro img {
+  width: 100%;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 0.5rem;
+}
+
+.miembro p {
+  font-weight: 500;
+  color: #34495e;
+}
+
+/* En tu archivo Nosotros.css o un archivo global */
+.nosotros-container {
+  margin-top: 10 !important;
+  padding-top: 10 !important;
+}
+
+body, html {
+  margin: 10;
+  padding: 10;
+}
+
+main {
+  margin: 0;
+  padding: 0;
+}
