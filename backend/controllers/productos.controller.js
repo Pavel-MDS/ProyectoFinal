@@ -26,10 +26,30 @@ const obtenerProducto = (req, res) => {
     res.json(resultados[0]);
   });
 };
+//actualizar producto y eliminar producto
+
+// Actualizar un producto
+const actualizarProducto = (req, res) => {
+  const id = req.params.id;
+  const datos = req.body;
+  Producto.actualizarProducto(id, datos, (err, resultado) => {
+    if (err) return res.status(500).json({ error: 'Error al actualizar el producto' });
+    res.json({ mensaje: 'Producto actualizado correctamente' });
+  });
+};
+
+// Eliminar un producto
+const eliminarProducto = (req, res) => {
+  const id = req.params.id;
+  Producto.eliminarProducto(id, (err, resultado) => {
+    if (err) return res.status(500).json({ error: 'Error al eliminar el producto' });
+    res.json({ mensaje: 'Producto eliminado correctamente' });
+  });
+};
 
 // Crear producto usando categoria (texto) y emprendimiento_id del token
 const crearProducto = (req, res) => {
-  console.log({BODY: req.body})
+  console.log({ BODY: req.body });
   const {
     nombre,
     descripcion,
@@ -46,46 +66,51 @@ const crearProducto = (req, res) => {
   }
 
   // Buscar tipo de producto por nombre
-  db.query('SELECT id FROM tipos_producto WHERE LOWER(nombre) = ?', [categoria.toLowerCase()], (err, rows) => {
-    if (err) {
-      console.error('❌ Error al consultar categoría:', err);
-      return res.status(500).json({ error: 'Error al buscar categoría' });
-    }
-
-    if (rows.length === 0) {
-      return res.status(400).json({ error: 'Categoría no válida' });
-    }
-
-    const tipo_producto_id = rows[0].id;
-
-    // Insertar el producto
-    const datos = {
-      nombre,
-      descripcion,
-      precio,
-      unidades_disponibles,
-      imagen_url: imagen,
-      tipo_producto_id,
-      emprendimiento_id
-    };
-
-    Producto.crearProducto(datos, (err, resultado) => {
+  db.query(
+    'SELECT id FROM tipos_producto WHERE LOWER(nombre) = ?',
+    [categoria.toLowerCase()],
+    (err, rows) => {
       if (err) {
-        console.error('❌ Error al guardar producto:', err);
-        return res.status(500).json({ error: 'Error al guardar el producto' });
+        console.error('❌ Error al consultar categoría:', err);
+        return res.status(500).json({ error: 'Error al buscar categoría' });
       }
 
-      res.status(201).json({
-        mensaje: '✅ Producto guardado correctamente',
-        id: resultado.insertId
+      if (rows.length === 0) {
+        return res.status(400).json({ error: 'Categoría no válida' });
+      }
+
+      const tipo_producto_id = rows[0].id;
+
+      // Insertar el producto
+      const datos = {
+        nombre,
+        descripcion,
+        precio,
+        unidades_disponibles,
+        imagen_url: imagen,
+        tipo_producto_id,
+        emprendimiento_id
+      };
+
+      Producto.crearProducto(datos, (err, resultado) => {
+        if (err) {
+          console.error('❌ Error al guardar producto:', err);
+          return res.status(500).json({ error: 'Error al guardar el producto' });
+        }
+
+        res.status(201).json({
+          mensaje: '✅ Producto guardado correctamente',
+          id: resultado.insertId
+        });
       });
-    });
-  });
+    }
+  );
 };
-//*************************
 
 module.exports = {
   listarProductos,
   obtenerProducto,
-  crearProducto
+  crearProducto,
+  actualizarProducto,
+  eliminarProducto
 };

@@ -1,5 +1,6 @@
 const db = require('../db/connection');
 
+// Agrega una reseña de servicio
 const agregarResenaServicio = (datos, callback) => {
   const { usuario_id, servicio_id, calificacion, comentario } = datos;
   db.query(
@@ -10,6 +11,7 @@ const agregarResenaServicio = (datos, callback) => {
   );
 };
 
+// Obtiene todas las reseñas para un servicio específico
 const obtenerResenasDeServicio = (servicioId, callback) => {
   db.query(
     `SELECT r.*, u.nombre AS usuario 
@@ -21,6 +23,7 @@ const obtenerResenasDeServicio = (servicioId, callback) => {
   );
 };
 
+// Obtiene todas las reseñas hechas por un usuario (solo servicios)
 const obtenerResenasDeUsuario = (usuarioId, callback) => {
   db.query(
     `SELECT r.*, s.nombre AS nombre_item, 'servicio' AS tipo

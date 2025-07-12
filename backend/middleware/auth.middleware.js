@@ -1,14 +1,19 @@
-// middleware/auth.middleware.js
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'un_secreto_muy_secreto';
+require('dotenv').config(); // Cargar variables .env
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  throw new Error('Falta definir JWT_SECRET en el archivo .env');
+}
+
 /** */
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
   if (!token) return res.status(401).json({ error: 'Token requerido' });
-  console.log(token)
-  jwt.verify(token,JWT_SECRET, (err, usuario) => {
-    console.log(usuario)
+
+  jwt.verify(token, JWT_SECRET, (err, usuario) => {
     if (err) return res.status(403).json({ error: 'Token inválido' });
     req.usuario = usuario;
     next();
@@ -37,4 +42,4 @@ function autorizar(...rolesPermitidos) {
   };
 }
 
-module.exports = { authenticateToken,validarToken, autorizar };
+module.exports = { authenticateToken, validarToken, autorizar };

@@ -1,12 +1,11 @@
-// routes/reseñas.routes.js
+// routes/resenas.routes.js
 const { validarToken } = require('../middleware/auth.middleware');
 const express = require('express');
 const router = express.Router();
 const resenasController = require('../controllers/resenas.controller');
 
-
 // Reseñas de productos
-router.post('/producto', resenasController.agregarResenaProducto);
+router.post('/producto', validarToken, resenasController.agregarResenaProducto);
 router.get('/producto', resenasController.obtenerTodasResenasDeProductos);
 router.get('/producto/:productoId', resenasController.obtenerResenasProducto);
 

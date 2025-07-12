@@ -1,41 +1,34 @@
-// routes/usuarios.routes.js
 const express = require('express');
 const router = express.Router();
 const db = require('../db/connection');
 const usuariosController = require('../controllers/usuarios.controller');
 const { validarToken, autorizar } = require('../middleware/auth.middleware');
 
-/*
-// Ruta para obtener todos los usuarios
-router.get('/', usuariosController.listarUsuarios);
-*/
+// ✅ Obtener perfil del usuario autenticado
 router.get('/me',
   validarToken,
   autorizar('usuario', 'emprendimiento'),
   (req, res) => {
-    res.json(req.user); // req.user es poblado por el middleware validarToken
+    res.json(req.user);
   }
 );
 
-// Ruta para obtener un usuario por ID
-router.get('/:id', usuariosController.obtenerUsuario);
-
-// Ruta para crear un nuevo usuario
+// ✅ Crear nuevo usuario (registro)
 router.post('/', usuariosController.crearUsuario);
 
-// Ruta para actualizar un usuario existente
+// ✅ Actualizar usuario por ID
 router.put('/:id', usuariosController.actualizarUsuario);
 
-// Ruta para eliminar un usuario
+// ✅ Eliminar usuario por ID
 router.delete('/:id', usuariosController.eliminarUsuario);
 
-// reseñas para usuarios
+// ✅ Obtener reseñas hechas por un usuario
 router.get('/:id/resenas', usuariosController.obtenerResenasUsuario);
 
-// Solo un usuario autenticado puede ver su propio perfil:
+// ✅ Obtener usuario por ID (protegido)
 router.get('/:id',
   validarToken,
-  autorizar('usuario'),
+  autorizar('usuario', 'emprendimiento'),
   usuariosController.obtenerUsuario
 );
 

@@ -15,7 +15,7 @@ const obtenerUsuario = (req, res) => {
   const id = req.params.id;
   Usuario.obtenerUsuarioPorId(id, (err, resultado) => {
     if (err) return res.status(500).json({ error: 'Error al obtener el usuario' });
-    if (resultado.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
+    if (!resultado || resultado.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
     res.json(resultado[0]);
   });
 };
@@ -48,19 +48,16 @@ const eliminarUsuario = (req, res) => {
   });
 };
 
-// Devuelve todas las reseñas que hizo un usuario (productos + servicios)
+// Obtener reseñas del usuario (productos y servicios)
 const obtenerResenasUsuario = (req, res) => {
   const userId = req.params.id;
 
-  // Primero las de producto
   ResenaProducto.obtenerResenasDeUsuario(userId, (err, prodReviews) => {
     if (err) return res.status(500).json({ error: 'Error al obtener reseñas de productos' });
 
-    // Luego las de servicio
     ResenaServicio.obtenerResenasDeUsuario(userId, (err2, servReviews) => {
       if (err2) return res.status(500).json({ error: 'Error al obtener reseñas de servicios' });
 
-      // Unimos ambas listas
       res.json({
         productos: prodReviews,
         servicios: servReviews
