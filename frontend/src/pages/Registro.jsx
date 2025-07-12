@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { register, login } from '../services/authService';
-import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Registro.css';
+import axios from 'axios';
 
 const Registro = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,10 +15,10 @@ const Registro = () => {
     contacto: '',
     direccion: ''
   });
-
   const [productos, setProductos] = useState([]);
   const navigate = useNavigate();
   const { loginUsuario } = useContext(AuthContext);
+  const API = import.meta.env.VITE_API_URL;
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -47,28 +47,21 @@ const Registro = () => {
     setProductos(nuevos);
   };
 
-const handleLogin = async e => {
-  e.preventDefault();
-  try {
-    const payload = {
-      correo: form.correo,
-      contrasena: form.contrasena,
-      tipo: tipoCuenta
-    };
-
-    const { data } = await login(payload);
-
-    loginUsuario(data.token, tipoCuenta); // actualiza context y localStorage de forma sincronizada
-
-    if (tipoCuenta === 'usuario') {
-      navigate('/dashboard/usuario');
-    } else {
-      navigate('/dashboard/emprendimiento');
+  const handleLogin = async e => {
+    e.preventDefault();
+    try {
+      const payload = {
+        correo: form.correo,
+        contrasena: form.contrasena,
+        tipo: tipoCuenta
+      };
+      const { data } = await login(payload);
+      loginUsuario(data.token, tipoCuenta);
+      navigate(tipoCuenta === 'usuario' ? '/dashboard/usuario' : '/dashboard/emprendimiento');
+    } catch (err) {
+      alert(err.response?.data?.error || 'Error de autenticación');
     }
-  } catch (err) {
-    alert(err.response?.data?.error || 'Error de autenticación');
-  }
-};
+  };
 
   const handleRegister = async e => {
     e.preventDefault();
@@ -81,9 +74,9 @@ const handleLogin = async e => {
         contacto: form.contacto,
         direccion: form.direccion
       };
+
       await register(payload);
 
-      // Login automático tras registrarse
       const { data } = await login({
         correo: form.correo,
         contrasena: form.contrasena,
@@ -92,12 +85,31 @@ const handleLogin = async e => {
 
       loginUsuario(data.token, tipoCuenta);
 
-      if (tipoCuenta === 'usuario') {
-        navigate('/dashboard/usuario');
-      } else {
-        navigate('/dashboard/emprendimiento');
+      if (tipoCuenta === 'emprendimiento' && productos.length > 0) {
+        for (const producto of productos) {
+          if (
+            !producto.nombre || !producto.categoria || !producto.descripcion ||
+            !producto.precio || !producto.imagen
+          ) continue;
+
+          await axios.post(`${API}/api/productos`, {
+            nombre: producto.nombre,
+            descripcion: producto.descripcion,
+            precio: parseFloat(producto.precio),
+            imagen: producto.imagen,
+            categoria: producto.categoria,
+            correo: form.correo // usamos el correo como referencia del emprendimiento
+          }, {
+            headers: {
+              Authorization: `Bearer ${data.token}`
+            }
+          });
+        }
       }
+
+      navigate(tipoCuenta === 'usuario' ? '/dashboard/usuario' : '/dashboard/emprendimiento');
     } catch (err) {
+      console.error(err);
       alert(err.response?.data?.error || 'Error al registrar');
     }
   };
@@ -117,6 +129,7 @@ const handleLogin = async e => {
         </div>
 
         <div className="form-container">
+          {/* Formulario de Login */}
           <form className={`formulario__login ${isLogin ? 'active' : ''}`} onSubmit={handleLogin}>
             <h2>Iniciar Sesión</h2>
             <select
@@ -146,6 +159,7 @@ const handleLogin = async e => {
             <button type="submit">Entrar</button>
           </form>
 
+          {/* Formulario de Registro */}
           <form className={`formulario__register ${!isLogin ? 'active' : ''}`} onSubmit={handleRegister}>
             <h2>Registro</h2>
             <select
@@ -233,48 +247,15 @@ const handleLogin = async e => {
                       />
                       <input
                         type="text"
-                        placeholder="Nombre de imagen (ej: producto.jpg)"
+                        placeholder="Nombre de imagen (ej: producto.jpg o base64)"
                         value={p.imagen}
                         onChange={(e) => actualizarProducto(i, 'imagen', e.target.value)}
                         required
                       />
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const producto = productos[i];
-                            if (
-                              !producto.nombre ||
-                              !producto.categoria ||
-                              !producto.descripcion ||
-                              !producto.precio ||
-                              !producto.imagen
-                            ) {
-                              alert('Por favor, completa todos los campos del producto antes de subirlo.');
-                              return;
-                            }
-
-                            const productosGuardados = JSON.parse(localStorage.getItem('productos') || '[]');
-                            const nuevoProducto = {
-                              ...producto,
-                              precio: parseFloat(producto.precio),
-                              contacto: form.contacto || 'sin contacto'
-                            };
-                            localStorage.setItem('productos', JSON.stringify([...productosGuardados, nuevoProducto]));
-                            alert('✅ Producto guardado con éxito');
-                          }}
-                        >
-                          Subir este producto
-                        </button>
-                        <button type="button" onClick={() => eliminarProducto(i)}>Eliminar</button>
-                      </div>
+                      <button type="button" onClick={() => eliminarProducto(i)}>Eliminar</button>
                     </div>
                   ))}
-
-                  <button type="button" onClick={agregarProducto}>
-  ➕ Agregar nuevo producto
-</button>
-
+                  <button type="button" onClick={agregarProducto}>➕ Agregar nuevo producto</button>
                 </div>
               </>
             )}

@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import './Dashboard.css';
+import { CgLayoutGrid } from 'react-icons/cg';
 
 const DashboardEmprendimiento = () => {
   const [emprendimiento, setEmprendimiento] = useState(null);
@@ -14,6 +15,7 @@ const DashboardEmprendimiento = () => {
   const [mostrarFormularioServicio, setMostrarFormularioServicio] = useState(false);
   const [servicios, setServicios] = useState([]);
   const [productos, setProductos] = useState([]);
+  // const [productoEditando, setProductoEditando] = useState(null);
 
 
   const [nuevoProducto, setNuevoProducto] = useState({
@@ -96,56 +98,48 @@ const DashboardEmprendimiento = () => {
     };
     reader.readAsDataURL(file);
   };
-
-  const handleAgregarProducto = (e) => {
-    e.preventDefault();
-    
-    // Validación de campos
-    if (!nuevoProducto.nombre || !nuevoProducto.categoria || 
-        !nuevoProducto.descripcion || !nuevoProducto.precio || !nuevoProducto.imagen) {
-      alert('Por favor complete todos los campos');
-      return;
-    }
-
-    // Obtener productos existentes
-    const productosGuardados = JSON.parse(localStorage.getItem('productos') || '[]');
-    
-    // Crear nuevo producto
-    const productoParaGuardar = {
-      nombre: nuevoProducto.nombre,
-      categoria: nuevoProducto.categoria,
-      descripcion: nuevoProducto.descripcion,
-      precio: parseFloat(nuevoProducto.precio) || 0,
-      imagen: nuevoProducto.imagen,
-      imagenNombre: nuevoProducto.imagenNombre,
-      contacto: nuevoProducto.contacto
-    };
-
-    // Guardar en localStorage
-    localStorage.setItem(
-      'productos',
-      JSON.stringify([...productosGuardados, productoParaGuardar])
-    );
-
-    // Resetear formulario
-    setNuevoProducto({
-      nombre: '',
-      categoria: '',
-      descripcion: '',
-      precio: '',
-      imagen: null,
-      imagenNombre: '',
-      contacto: nuevoProducto.contacto
-    });
-    
-    setMostrarFormulario(false);
-    alert('✅ Producto agregado con éxito');
-  };
+/************************************/
 
 
+/*******************************/
+  const handleAgregarProducto = async (e) => {
+  e.preventDefault();
+  const token = localStorage.getItem('token');
+
+  if (!nuevoProducto.nombre || !nuevoProducto.categoria || !nuevoProducto.descripcion || !nuevoProducto.precio || !nuevoProducto.imagen) {
+    alert('Completa todos los campos');
+    return;
+  }
 
   
-  useEffect(() => {
+  try {
+    console.log({nuevoProducto})
+    await axios.post('http://localhost:3001/api/productos', {
+      nombre: nuevoProducto.nombre,
+      descripcion: nuevoProducto.descripcion,
+      precio: parseFloat(nuevoProducto.precio),
+      imagen: nuevoProducto.imagen, // cadena base64 o url
+      categoria: nuevoProducto.categoria  
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    alert('✅ Producto agregado');
+    setMostrarFormulario(false);
+    // Refrescar lista
+    const res = await axios.get(`http://localhost:3001/api/emprendimientos/${emprendimiento.id}/contenido`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    setProductos(res.data.filter(i => i.tipo === 'producto'));
+  } catch (err) {
+    console.error('❌ Error al guardar producto:', err.response?.data || err);
+    alert('❌ Error al guardar producto: ' + (err.response?.data?.error || 'Error interno'));
+  }
+};
+
+  
+  
+useEffect(() => {
     const token = localStorage.getItem('token');
     if (!emprendimiento?.id) return;
 
@@ -162,6 +156,9 @@ const DashboardEmprendimiento = () => {
     });
 
   }, [emprendimiento]);
+
+
+
 
  const onEditar = (item) => {
     // Aquí puedes mostrar un modal con el formulario de edición
@@ -238,6 +235,7 @@ const DashboardEmprendimiento = () => {
             Cerrar Sesión
           </button>
         </div>
+
          <h2>🛒 Productos</h2>
       <table border="1" cellPadding="8" cellSpacing="0" style={{ width: '100%', marginBottom: '30px' }}>
         <thead>

@@ -1,11 +1,14 @@
+// routes/usuarios.routes.js
 const express = require('express');
 const router = express.Router();
+const db = require('../db/connection');
 const usuariosController = require('../controllers/usuarios.controller');
 const { validarToken, autorizar } = require('../middleware/auth.middleware');
 
+/*
 // Ruta para obtener todos los usuarios
 router.get('/', usuariosController.listarUsuarios);
-
+*/
 router.get('/me',
   validarToken,
   autorizar('usuario', 'emprendimiento'),

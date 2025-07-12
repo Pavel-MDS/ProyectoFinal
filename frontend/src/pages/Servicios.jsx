@@ -12,13 +12,14 @@ const Servicios = () => {
   const [mostrarResumen, setMostrarResumen] = useState(false);
   const [servicioResumen, setServicioResumen] = useState(null);
 
+  const API = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   useEffect(() => {
-  axios.get('http://localhost:3001/api/servicios')
-    .then(res => setServicios(res.data))
-    .catch(err => console.error('Error al cargar servicios:', err));
-  }, []);
+    axios.get(`${API}/api/servicios`)
+      .then(res => setServicios(res.data))
+      .catch(err => console.error('Error al cargar servicios:', err));
+  }, [API]);
 
   const seleccionarServicio = (servicio) => {
     setDetalle(servicio);
@@ -49,6 +50,33 @@ const Servicios = () => {
   const cerrarResumen = () => {
     setMostrarResumen(false);
     setServicioResumen(null);
+  };
+
+  const handleGuardarReseña = async () => {
+    const token = localStorage.getItem('token');
+    if (!detalle) return alert('Selecciona un servicio primero');
+    if (!token) return alert('Debes iniciar sesión para enviar una reseña');
+
+    try {
+      await axios.post(
+        `${API}/api/resenas/servicio`,
+        {
+          servicio_id: detalle.id,
+          calificacion: valoracion ? 1 : 0,
+          comentario
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      alert('✅ Reseña guardada');
+      cerrarModal();
+    } catch (e) {
+      console.error(e.response || e);
+      alert('❌ No se pudo guardar la reseña');
+    }
   };
 
   const pagarServicio = () => {
@@ -143,8 +171,10 @@ const Servicios = () => {
               />
               <div>{comentario.length}/200 caracteres</div>
             </div>
-
-            <button onClick={confirmarServicio}>Adquirir Servicio</button>
+            <div className="botones-servicio">
+              <button onClick={confirmarServicio}>Adquirir Servicio</button>
+              <button onClick={handleGuardarReseña}>Guardar Reseña</button>
+            </div>
           </div>
         </div>
       )}

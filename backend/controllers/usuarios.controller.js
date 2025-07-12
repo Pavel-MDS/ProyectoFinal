@@ -53,11 +53,11 @@ const obtenerResenasUsuario = (req, res) => {
   const userId = req.params.id;
 
   // Primero las de producto
-  ReseñaProducto.obtenerResenasDeUsuario(userId, (err, prodReviews) => {
+  ResenaProducto.obtenerResenasDeUsuario(userId, (err, prodReviews) => {
     if (err) return res.status(500).json({ error: 'Error al obtener reseñas de productos' });
 
     // Luego las de servicio
-    ResenaServicio.obtenerReseñasDeUsuario(userId, (err2, servReviews) => {
+    ResenaServicio.obtenerResenasDeUsuario(userId, (err2, servReviews) => {
       if (err2) return res.status(500).json({ error: 'Error al obtener reseñas de servicios' });
 
       // Unimos ambas listas
