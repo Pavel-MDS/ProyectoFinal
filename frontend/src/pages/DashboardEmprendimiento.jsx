@@ -165,28 +165,38 @@ useEffect(() => {
     alert(`Editar ${item.tipo || 'producto/servicio'}: ${item.nombre}`);
   };
 
- const onEliminar = (id, tipo) => {
-    const token = localStorage.getItem('token');
-    const confirmacion = window.confirm(`¿Seguro que deseas eliminar este ${tipo}?`);
-    if (!confirmacion) return;
+const onEliminar = (itemId, tipo) => {
+  const token = localStorage.getItem('token');
+  const confirmacion = window.confirm(`¿Seguro que deseas eliminar este ${tipo}?`);
+  if (!confirmacion) return;
 
-    const endpoint = tipo === 'producto'
-      ? `/api/emprendimientos/${id}/eliminarproducto/${id}`
-      : `/api/emprendimientos/${id}/eliminarservicio`;
+  const emprendimientoId = emprendimiento?.id;
 
-    axios.delete(endpoint, {
-      headers: { Authorization: `Bearer ${token}` }
+  let endpoint = '';
+
+  if (tipo === 'producto') {
+    endpoint = `http://localhost:3001/api/emprendimientos/${emprendimientoId}/productos/${itemId}`;
+  } else if (tipo === 'servicio') {
+    endpoint = `http://localhost:3001/api/emprendimientos/${emprendimientoId}/servicios/${itemId}`;
+  }
+
+  axios.delete(endpoint, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then(() => {
+      alert(`${tipo} eliminado correctamente`);
+      if (tipo === 'producto') {
+        setProductos(prev => prev.filter(p => p.id !== itemId));
+      } else {
+        setServicios(prev => prev.filter(s => s.id !== itemId));
+      }
     })
-      .then(() => {
-        alert(`${tipo} eliminado correctamente`);
-        // Refrescar la lista
-        setProductos(prev => prev.filter(p => p.id !== id));
-        setServicios(prev => prev.filter(s => s.id !== id));
-      })
-      .catch(err => {
-        console.error(`Error al eliminar ${tipo}:`, err);
-      });
-  };
+    .catch(err => {
+      console.error(`Error al eliminar ${tipo}:`, err);
+      alert(`Error al eliminar ${tipo}`);
+    });
+};
+
 
 
 
