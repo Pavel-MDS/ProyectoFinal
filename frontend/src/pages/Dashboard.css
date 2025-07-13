@@ -284,3 +284,25 @@ input[type="file"] {
     align-items: flex-start;
   }
 }
+
+/**/
+.acciones-producto {
+  margin-top: 8px;
+}
+.acciones-producto button {
+  margin-right: 10px;
+  padding: 5px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.btn-editar {
+  background-color: #f0ad4e;
+  color: white;
+  border: none;
+}
+.btn-eliminar {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+}
+

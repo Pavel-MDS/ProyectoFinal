@@ -98,7 +98,7 @@ const Registro = () => {
             precio: parseFloat(producto.precio),
             imagen: producto.imagen,
             categoria: producto.categoria,
-            correo: form.correo // usamos el correo como referencia del emprendimiento
+        
           }, {
             headers: {
               Authorization: `Bearer ${data.token}`

@@ -125,6 +125,7 @@ const Productos = () => {
             <option value="cascos">Cascos</option>
             <option value="chaleco">Chalecos</option>
             <option value="botas">Botas</option>
+            <option value="otros">Otross</option>
           </select>
         </div>
       </div>
