@@ -169,7 +169,7 @@ const DashboardEmprendimiento = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleEditarProducto = (producto) => {
+  /*const handleEditarProducto = (producto) => {
     setProductoEditando(producto.id);
     setNuevoProducto({
       nombre: producto.nombre,
@@ -181,7 +181,7 @@ const DashboardEmprendimiento = () => {
       contacto: producto.contacto
     });
     setMostrarFormulario(true);
-  };
+  };*/
 
   const handleActualizarProducto = async (e) => {
     e.preventDefault();
@@ -332,6 +332,7 @@ const DashboardEmprendimiento = () => {
     }
   };
 
+  // servicios
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!emprendimiento?.id) return;
@@ -348,6 +349,66 @@ const DashboardEmprendimiento = () => {
       console.error('Error al obtener contenido:', err);
     });
   }, [emprendimiento]);
+ // fin
+  const onEditar = (item) => {
+  if (item.tipo === 'producto') {
+    setProductoEditando(item.id);
+    setNuevoProducto({
+      nombre: item.nombre,
+      categoria: item.categoria,
+      descripcion: item.descripcion,
+      precio: item.precio,
+      imagen: item.imagen,
+      imagenNombre: '', // No puedes recuperar el nombre original del archivo base64
+      contacto: item.contacto
+    });
+    setMostrarFormulario(true);
+  } else if (item.tipo === 'servicio') {
+    setNuevoServicio({
+      nombre: item.nombre,
+      descripcion_corta: item.descripcion_corta || '',
+      descripcion_detallada: item.descripcion_detallada || '',
+      horario: item.horario || '',
+      contacto: item.contacto || '',
+      imagen_url: item.imagen_url || ''
+    });
+    setMostrarFormularioServicio(true);
+  }
+};
+;
+
+const onEliminar = (itemId, tipo) => {
+  const token = localStorage.getItem('token');
+  const confirmacion = window.confirm(`¿Seguro que deseas eliminar este ${tipo}?`);
+  if (!confirmacion) return;
+
+  const emprendimientoId = emprendimiento?.id;
+
+  let endpoint = '';
+
+  if (tipo === 'producto') {
+    endpoint = `http://localhost:3001/api/emprendimientos/${emprendimientoId}/productos/${itemId}`;
+  } else if (tipo === 'servicio') {
+    endpoint = `http://localhost:3001/api/emprendimientos/${emprendimientoId}/servicios/${itemId}`;
+  }
+
+  axios.delete(endpoint, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then(() => {
+      alert(`${tipo} eliminado correctamente`);
+      if (tipo === 'producto') {
+        setProductos(prev => prev.filter(p => p.id !== itemId));
+      } else {
+        setServicios(prev => prev.filter(s => s.id !== itemId));
+      }
+    })
+    .catch(err => {
+      console.error(`Error al eliminar ${tipo}:`, err);
+      alert(`Error al eliminar ${tipo}`);
+    });
+};
+ //
 
   const handleAgregarServicio = async (e) => {
     e.preventDefault();
@@ -408,37 +469,66 @@ const DashboardEmprendimiento = () => {
         </div>
         
         <h2>🛒 Productos</h2>
-        {productos?.length === 0 ? (
-          <p>No hay productos registrados.</p>
-        ) : (
-          <ul>
-            {productos.map((p) => (
-              <li key={`prod-${p.id}`}>
-                <strong>{p.nombre}</strong> – S/. {Number(p.precio).toFixed(2)}<br />
-                <span>{p.descripcion}</span>
-                <div className="acciones-producto">
-                  <button onClick={() => handleEditarProducto(p)}>✏️ Editar</button>
-                  <button onClick={() => handleEliminarProducto(p.id)}>🗑 Eliminar</button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+          <table border="1" cellPadding="8" cellSpacing="0" style={{ width: '100%', marginBottom: '30px' }}>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {productos?.length === 0 ? (
+            <tr>
+              <td colSpan="4" style={{ textAlign: 'center' }}>No hay productos registrados.</td>
+            </tr>
+          ) : (
+            productos.map((p) => (
+              <tr key={`prod-${p.id}`}>
+                <td>{p.nombre}</td>
+                <td>S/. {Number(p.precio).toFixed(2)}</td>
+                <td>{p.descripcion}</td>
+                <td style={{ textAlign: 'center' }}>
+                  <button onClick={() => onEditar(p)} title="Editar">✏️</button>{' '}
+                  <button onClick={() => handleEliminarProducto(p.id, 'producto')} title="Eliminar">🗑️</button>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
 
         <h2>🛠 Servicios</h2>
-        {servicios?.length === 0 ? (
-          <p>No hay servicios registrados.</p>
-        ) : (
-          <ul>
-            {servicios.map((s) => (
-              <li key={`serv-${s.id}`}>
-                <strong>{s.nombre}</strong><br />
-                <span>{s.descripcion || s.descripcion_corta}</span><br />
-                <em>Horario: {s.horario}</em>
-              </li>
-            ))}
-          </ul>
-        )}
+          <table border="1" cellPadding="8" cellSpacing="0" style={{ width: '100%' }}>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Horario</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {servicios?.length === 0 ? (
+            <tr>
+              <td colSpan="4" style={{ textAlign: 'center' }}>No hay servicios registrados.</td>
+            </tr>
+          ) : (
+            servicios.map((s) => (
+              <tr key={`serv-${s.id}`}>
+                <td>{s.nombre}</td>
+                <td>{s.descripcion || s.descripcion_corta}</td>
+                <td>{s.horario}</td>
+                <td style={{ textAlign: 'center' }}>
+                  <button onClick={() => onEditar(s)} title="Editar">✏️</button>{' '}
+                  <button onClick={() => onEliminar(s.id, 'servicio')} title="Eliminar">🗑️</button>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
         
         <div className="stats-grid">
           <div className="stat-card">

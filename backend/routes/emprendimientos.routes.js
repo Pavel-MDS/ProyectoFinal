@@ -22,7 +22,21 @@ router.get('/estadisticas',
   emprendimientosController.obtenerEstadisticas
 );
 
-// ✅ Esta ruta debe ir antes que '/:id'
+// Eliminar un producto de un emprendimiento
+router.delete('/:idEmprendimiento/productos/:idProducto',
+  validarToken,
+  autorizar('emprendimiento'),
+  emprendimientosController.eliminarProducto
+);
+
+// Eliminar un servicio de un emprendimiento
+router.delete('/:idEmprendimiento/servicios/:idServicio',
+  validarToken,
+  autorizar('emprendimiento'),
+  emprendimientosController.eliminarServicio
+);
+
+//  Esta ruta debe ir antes que '/:id'
 router.get('/:id/contenido', emprendimientosController.obtenerContenido);
 
 // Obtener emprendimiento por ID (público)
@@ -33,5 +47,6 @@ router.post('/', emprendimientosController.crearEmprendimiento);
 
 // Eliminar emprendimiento por ID
 router.delete('/:id', emprendimientosController.eliminarEmprendimiento);
+
 
 module.exports = router;

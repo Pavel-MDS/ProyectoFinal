@@ -30,8 +30,21 @@ const obtenerServicioPorId = (id, callback) => {
   db.query('SELECT * FROM servicios WHERE id = ?', [id], callback);
 };
 
+// Eliminar servicio
+const eliminarServicio = (id, callback) => {
+  db.query('DELETE FROM servicios WHERE id = ?', [id], callback);
+};
+
+// Actualizar servicio
+const actualizarServicio = (id, datos, callback) => {
+  db.query('UPDATE servicios SET ? WHERE id = ?', [datos, id], callback);
+};
+
+// Exportar todas las funciones
 module.exports = {
   obtenerServicios,
   crearServicio,
-  obtenerServicioPorId
+  obtenerServicioPorId,
+  eliminarServicio,
+  actualizarServicio
 };

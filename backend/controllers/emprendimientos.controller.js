@@ -68,12 +68,72 @@ const obtenerEstadisticas = (req, res) => {
     res.json(stats);
   });
 };
+
+// 8) LISTAR PRODUCTOS Y SERVICIOS POR EMPRESA
 const obtenerContenido = (req, res) => {
   const id = req.params.id;
 
   Emprendimiento.obtenerContenidoPorEmprendimiento(id, (err, data) => {
     if (err) return res.status(500).json({ error: 'Error al obtener contenido' });
     res.json(data);
+  });
+};
+// 9) PUT - Editar producto
+const editarProducto = (req, res) => {
+  const productoId = req.params.id;
+  const emprendimientoId = req.params.emprendimientoId;
+  const datos = req.body;
+
+  Producto.editarProductoPorId(productoId, emprendimientoId, datos, (err, result) => {
+    if (err) return res.status(500).json({ error: 'Error al editar el producto' });
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'Producto no encontrado o no autorizado' });
+    res.json({ mensaje: 'Producto actualizado correctamente' });
+  });
+};
+
+// 10) DELETE - Eliminar producto
+const eliminarProducto = (req, res) => {
+  const productoId = req.params.id;
+  const emprendimientoId = req.params.emprendimientoId;
+
+  Emprendimiento.eliminarProductoPorId(productoId, emprendimientoId, (err, result) => {
+    if (err) return res.status(500).json({ error: 'Error al eliminar el producto' });
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'Producto no encontrado o no autorizado' });
+    res.json({ mensaje: 'Producto eliminado correctamente' });
+  });
+};
+// 11) PUT - Editar servicio
+const editarServicio = (req, res) => {
+  const servicioId = req.params.productoId;
+  const emprendimientoId = req.params.emprendimientoId;
+  const datos = req.body;
+
+  Servicio.editarServicioPorId(servicioId, emprendimientoId, datos, (err, result) => {
+    if (err) return res.status(500).json({ error: 'Error al editar el servicio' });
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'Servicio no encontrado o no autorizado' });
+    res.json({ mensaje: 'Servicio actualizado correctamente' });
+  });
+};
+
+// 12) DELETE - Eliminar servicio
+const eliminarServicio = (req, res) => {
+  const servicioId = req.params.servicioId;
+  const emprendimientoId = req.params.emprendimientoId;
+
+  console.log('🧾 Servicio ID:', servicioId);
+  console.log('🏢 Emprendimiento ID:', emprendimientoId);
+
+  Emprendimiento.eliminarServicioPorId(servicioId, emprendimientoId, (err, result) => {
+    if (err) {
+      console.error('❌ Error en la base de datos:', err);
+      return res.status(500).json({ error: 'Error al eliminar el servicio' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Servicio no encontrado o no autorizado' });
+    }
+
+    res.json({ mensaje: '✅ Servicio eliminado correctamente' });
   });
 };
 
@@ -85,5 +145,9 @@ module.exports = {
   eliminarEmprendimiento,
   obtenerMiPerfil,
   obtenerEstadisticas,
-  obtenerContenido
+  obtenerContenido,
+  editarProducto,
+  editarServicio,
+  eliminarProducto,
+  eliminarServicio
 };

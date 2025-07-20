@@ -28,6 +28,7 @@ app.use('/api/favoritos', require('./routes/favoritos.routes'));
 const frontendPath = path.join(__dirname, '../frontend/dist');
 app.use(express.static(frontendPath));
 
+
 // Fallback para SPA (rutas que no comienzan con /api)
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
@@ -37,3 +38,4 @@ app.get(/^\/(?!api).*/, (req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
 });
+
