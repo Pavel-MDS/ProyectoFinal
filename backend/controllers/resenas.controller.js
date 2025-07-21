@@ -4,7 +4,7 @@ const ResenaServicio = require('../models/resenaServicio.model');
 // Agregar reseña de producto
 const agregarResenaProducto = (req, res) => {
   const { producto_id, calificacion, comentario } = req.body;
-  const usuario_id = req.user.id; // ✅ desde token
+  const usuario_id = req.user.id; // desde token
 
   ResenaProducto.agregarResenaProducto(
     { usuario_id, producto_id, calificacion, comentario },

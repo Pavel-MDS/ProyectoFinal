@@ -59,7 +59,7 @@ const crearProducto = (req, res) => {
     categoria
   } = req.body;
 
-  const emprendimiento_id = req.usuario.id; // 🔐 del token
+  const emprendimiento_id = req.usuario.id; // del token
 
   if (!nombre || !descripcion || !precio || !imagen || !categoria) {
     return res.status(400).json({ error: 'Todos los campos son requeridos' });

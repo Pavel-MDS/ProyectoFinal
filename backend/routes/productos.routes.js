@@ -52,7 +52,7 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-// ✅ Actualizar producto
+//  Actualizar producto
 router.put('/:id', authenticateToken, async (req, res) => {
   const productoId = req.params.id;
   const { nombre, descripcion, precio, imagen, categoria, unidades_disponibles } = req.body;
@@ -88,7 +88,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// ✅ Eliminar producto
+// Eliminar producto
 router.delete('/:id', authenticateToken, async (req, res) => {
   const productoId = req.params.id;
   const emprendimiento_id = req.usuario.id;

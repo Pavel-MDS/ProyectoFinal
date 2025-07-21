@@ -4,7 +4,7 @@ const db = require('../db/connection');
 const usuariosController = require('../controllers/usuarios.controller');
 const { validarToken, autorizar } = require('../middleware/auth.middleware');
 
-// ✅ Obtener perfil del usuario autenticado
+//  Obtener perfil del usuario autenticado
 router.get('/me',
   validarToken,
   autorizar('usuario', 'emprendimiento'),
@@ -13,19 +13,19 @@ router.get('/me',
   }
 );
 
-// ✅ Crear nuevo usuario (registro)
+// Crear nuevo usuario (registro)
 router.post('/', usuariosController.crearUsuario);
 
-// ✅ Actualizar usuario por ID
+// Actualizar usuario por ID
 router.put('/:id', usuariosController.actualizarUsuario);
 
-// ✅ Eliminar usuario por ID
+// Eliminar usuario por ID
 router.delete('/:id', usuariosController.eliminarUsuario);
 
-// ✅ Obtener reseñas hechas por un usuario
+// Obtener reseñas hechas por un usuario
 router.get('/:id/resenas', usuariosController.obtenerResenasUsuario);
 
-// ✅ Obtener usuario por ID (protegido)
+// Obtener usuario por ID (protegido)
 router.get('/:id',
   validarToken,
   autorizar('usuario', 'emprendimiento'),

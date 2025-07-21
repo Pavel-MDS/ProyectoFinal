@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../db/connection');
 const { authenticateToken } = require('../middleware/auth.middleware');
 
-// ✅ Obtener todos los servicios (público)
+//  Obtener todos los servicios (público)
 router.get('/', (req, res) => {
   db.query(`
     SELECT s.id, s.nombre, s.descripcion_corta, s.descripcion_detallada,
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
   });
 });
 
-// ✅ Crear un servicio (emprendimiento autenticado)
+// Crear un servicio (emprendimiento autenticado)
 router.post('/', authenticateToken, async (req, res) => {
   const {
     nombre, descripcion_corta, descripcion_detallada,
@@ -72,7 +72,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// ✅ Eliminar servicio (solo del emprendimiento dueño)
+//Eliminar servicio (solo del emprendimiento dueño)
 router.delete('/:id', authenticateToken, async (req, res) => {
   const servicioId = req.params.id;
   const emprendimiento_id = req.usuario.id;

@@ -3,7 +3,7 @@ const router = express.Router();
 const ventasController = require('../controllers/ventas.controller');
 const { validarToken, autorizar } = require('../middleware/auth.middleware');
 
-// ✅ Registrar una venta de producto (usuario autenticado)
+//  Registrar una venta de producto (usuario autenticado)
 router.post(
   '/producto',
   validarToken,
@@ -11,7 +11,7 @@ router.post(
   ventasController.registrarVentaProducto
 );
 
-// ✅ Obtener ventas de productos por usuario (autenticado)
+//  Obtener ventas de productos por usuario (autenticado)
 router.get(
   '/producto/:usuarioId',
   validarToken,
@@ -19,7 +19,7 @@ router.get(
   ventasController.obtenerVentasProductosUsuario
 );
 
-// ✅ Registrar una venta de servicio (usuario autenticado)
+//  Registrar una venta de servicio (usuario autenticado)
 router.post(
   '/servicio',
   validarToken,
@@ -27,7 +27,7 @@ router.post(
   ventasController.registrarVentaServicio
 );
 
-// ✅ Obtener ventas de servicios por usuario (autenticado)
+//  Obtener ventas de servicios por usuario (autenticado)
 router.get(
   '/servicio/:usuarioId',
   validarToken,
